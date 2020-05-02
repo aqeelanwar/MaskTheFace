@@ -1,0 +1,10 @@
+*.pyc
+*.txt
+docs
+vgg_face_dataset
+data
+lfw
+lfw_40
+
+
+
