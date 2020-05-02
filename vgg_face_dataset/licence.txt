@@ -1,0 +1,42 @@
+OXFORD VGG Face dataset
+
+The dataset consists of the crawled images of celebrities on the
+Web. There are 2622 celebrities in the dataset and the dataset is
+designed to have no overlap with the popular face recognition
+benchmarks such as Labeled Faces in the Wild (LFW), YouTube Faces
+Dataset and IARPA Janus Benchmark A (IJB-A).
+
+Since the original images are subject to copyright, we do not make
+them available directly. We instead provide URLs and associated face
+detections from the dataset.
+
+The images are covered under a Creative Commons
+Attribution-NonCommercial 4.0 International license (Please read the
+license terms here. http://creativecommons.org/licenses/by-nc/4.0/).
+
+Downloading this dataset implies agreement to follow the same
+conditions of non-commercial research for any modification and/or
+re-distribution of the dataset in any form.
+
+
+Additionally any entity using this dataset agrees to the following conditions:
+
+THIS DATASET IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+HOLDER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+Please cite [1] below if you make use of the dataset.
+
+
+[1] O. M. Parkhi, A. Vedaldi, A. Zisserman
+Deep Face Recognition
+British Machine Vision Conference, 2015.
