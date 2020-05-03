@@ -3,8 +3,9 @@
 # Email: aqeel.anwar@gatech.edu
 
 import numpy as np
-import cv2, math
+import cv2, math, os, random
 from PIL import Image, ImageDraw
+from tqdm import tqdm
 
 
 def get_line(face_landmark, image, type="eye"):
@@ -353,3 +354,6 @@ def draw_landmarks(face_landmarks, image):
         d.line(face_landmarks[facial_feature], width=5, fill="white")
 
     pil_image.show()
+
+
+

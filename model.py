@@ -3,11 +3,15 @@
 # Email: aqeel.anwar@gatech.edu
 import tensorflow as tf
 from network import VGGNet16
-
+import numpy as np
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 class DNN:
     def __init__(self, num_classes):
         self.g = tf.Graph()
+        config = tf.ConfigProto()
+        config.gpu_options.allow_growth = True
         with self.g.as_default():
             stat_writer_path = "return_plot/"
             loss_writer_path = "loss/"
@@ -22,7 +26,7 @@ class DNN:
                 tf.float32, [None, None, None, 3], name="input"
             )
             self.labels = tf.placeholder(
-                tf.int32, shape=[None, num_classes], name="classes"
+                tf.int32, shape=[None], name="classes"
             )
 
             # Preprocessing
@@ -48,7 +52,7 @@ class DNN:
                 learning_rate=self.learning_rate, beta1=0.9, beta2=0.99
             ).minimize(self.loss, name="train_op")
 
-            self.sess = tf.InteractiveSession()
+            self.sess = tf.InteractiveSession(config=config)
             tf.global_variables_initializer().run()
             tf.local_variables_initializer().run()
             self.saver = tf.train.Saver()
@@ -70,6 +74,7 @@ class DNN:
         return predict_class, prediction_probs
 
     def train(self, input, labels, lr, iter):
+        labels = np.squeeze(labels)
         _, loss, acc = self.sess.run(
             [self.train_op, self.loss, self.accuracy],
             feed_dict={
@@ -79,14 +84,16 @@ class DNN:
                 self.labels: labels,
             },
         )
-
         # Log to tensorboard
         self.log_to_tensorboard(
             tag="Loss", group="Main", value=loss, index=iter, type="loss"
         )
         self.log_to_tensorboard(
-            tag="Acc", group="Main", value=acc, index=iter, type="loss"
+            tag="Acc", group="Main", value=acc[1], index=iter, type="loss"
         )
+
+        return loss, acc[1]
+
 
     def log_to_tensorboard(self, tag, group, value, index, type="loss"):
         summary = tf.Summary()
@@ -98,6 +105,7 @@ class DNN:
             self.stat_writer.add_summary(summary, index)
 
     def get_accuracy(self, input, labels):
+        labels = np.squeeze(labels)
         accuracy = self.sess.run(
             self.accuracy,
             feed_dict={

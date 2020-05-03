@@ -6,8 +6,6 @@
 import os, os.path
 from shutil import copyfile
 
-# simple version for working with CWD
-# print([name for name in os.listdir('.') if os.path.isfile(name)])
 count = 0
 path = "/Users/aqeelanwar/PycharmProjects/maskface/lfw"
 

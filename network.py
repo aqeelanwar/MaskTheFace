@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-from network.loss_functions import huber_loss
+# from network.loss_functions import huber_loss
 
 
 class VGGNet16(object):
