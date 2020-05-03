@@ -8,6 +8,9 @@ loss
 vgg_face_dataset
 saved_network
 loss
+z_detect_face.py
+z_main.py
+
 
 
 

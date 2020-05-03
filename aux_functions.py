@@ -6,6 +6,7 @@ import numpy as np
 import cv2, math, os, random
 from PIL import Image, ImageDraw
 from tqdm import tqdm
+from read_cfg import read_cfg
 
 
 def get_line(face_landmark, image, type="eye"):
@@ -194,13 +195,14 @@ def fit_line(x, y, image):
 
 
 def get_six_points(face_landmark, image):
-    _, _, _, _, m = get_line(face_landmark, image, type="nose_mid")
+    _, perp_line1, _, _, m = get_line(face_landmark, image, type="nose_mid")
     face_b = m
 
     perp_line, _, _, _, _ = get_line(face_landmark, image, type="perp_line")
+    points1 = get_points_on_chin(perp_line1, face_landmark)
     points = get_points_on_chin(perp_line, face_landmark)
-    face_e = points[0]
-
+    face_e = tuple((np.asarray(points[0]) + np.asarray(points1[0])) / 2)
+    # face_e = points1[0]
     nose_mid_line, _, _, _, _ = get_line(face_landmark, image, type="nose_long")
 
     angle = get_angle(perp_line, nose_mid_line)
@@ -248,89 +250,38 @@ def get_angle(line1, line2):
     return angle
 
 
-def mask_face(image, six_points, angle, T, type="surgical"):
-    debug = True
+def mask_face(image, six_points, angle, brightness_factor, type="surgical"):
     threshold = 13
+    if angle < -threshold:
+        type += "_right"
+    elif angle > threshold:
+        type += "_left"
 
-    if type == "N95":
-        if angle < threshold:
-            mask_a = (62, 111)
-            mask_b = (196, 21)
-            mask_c = (619, 120)
-            mask_d = (101, 434)
-            mask_e = (217, 541)
-            mask_f = (607, 398)
-            img = cv2.imread("masks/N95_left.png")
-        elif angle >= threshold:
-            mask_a = (62, 111)
-            mask_b = (196, 21)
-            mask_c = (649, 120)
-            mask_d = (101, 434)
-            mask_e = (217, 411)
-            mask_f = (647, 398)
-            img = cv2.imread("masks/N95_left.png")
-        else:
+    cfg = read_cfg(config_filename="masks/masks.cfg", mask_type=type, verbose=False)
+    debug = False
 
-            mask_a = (32, 110)
-            mask_b = (401, 21)
-            mask_c = (758, 98)
-            mask_d = (129, 498)
-            mask_e = (392, 639)
-            mask_f = (675, 490)
-            img = cv2.imread("masks/N95.png")
-
-    elif type == "surgical":
-        if angle > threshold:
-            mask_a = (39, 27)
-            mask_b = (118, 9)
-            mask_c = (488, 20)
-            mask_d = (44, 267)
-            mask_e = (168, 282)
-            mask_f = (487, 202)
-            img = cv2.imread("masks/surgical_mask_left.png")
-        elif angle < -threshold:
-            # Edit this
-            mask_a = (28, 20)
-            mask_b = (375, 9)
-            mask_c = (466, 27)
-            mask_d = (27, 202)
-            mask_e = (337, 282)
-            mask_f = (418, 267)
-            img = cv2.imread("masks/surgical_mask_right.png")
-        else:
-            mask_a = (41, 97)
-            mask_b = (307, 22)
-            mask_c = (570, 99)
-            mask_d = (55, 322)
-            mask_e = (295, 470)
-            mask_f = (555, 323)
-            img = cv2.imread("masks/surgical_mask.png")
-
-    # Change brightness
-    img = cv2.add(img, np.array([(T - 255) / 3]))
+    img = cv2.imread(cfg.template, cv2.IMREAD_UNCHANGED)
     w = image.shape[0]
     h = image.shape[1]
-    mask_line = np.float32([mask_a, mask_b, mask_c, mask_f, mask_e, mask_d])
+    mask_line = np.float32(
+        [cfg.mask_a, cfg.mask_b, cfg.mask_c, cfg.mask_f, cfg.mask_e, cfg.mask_d]
+    )
 
-    # M = cv2.getPerspectiveTransform(mask_line, face_line)
     M, mask = cv2.findHomography(mask_line, six_points)
-    matchesMask = mask.ravel().tolist()
-    # print(matchesMask)
     dst_mask = cv2.warpPerspective(img, M, (h, w))
-
     dst_mask_points = cv2.perspectiveTransform(mask_line.reshape(-1, 1, 2), M)
+    mask = dst_mask[:, :, 3]
 
-    img2gray = cv2.cvtColor(dst_mask, cv2.COLOR_BGR2GRAY)
-    ret, mask = cv2.threshold(img2gray, 10, 255, cv2.THRESH_BINARY_INV)
+    dst_mask = cv2.add(dst_mask, np.array([(brightness_factor - 255) / 3]))
+    # ret, mask = cv2.threshold(img2gray, 10, 255, cv2.THRESH_BINARY_INV)
     # cv2.imshow('mask_mask', mask)
     mask_inv = cv2.bitwise_not(mask)
-    img1_bg = cv2.bitwise_and(image, image, mask=mask)
-
-    img2_fg = cv2.bitwise_and(dst_mask, dst_mask, mask=mask_inv)
-    # cv2.imshow('f', img2_fg)
+    img_bg = cv2.bitwise_and(image, image, mask=mask_inv)
+    img_fg = cv2.bitwise_and(dst_mask, dst_mask, mask=mask)
+    # cv2.imshow('f', img_fg)
     # cv2.waitKey(0)
-    img1_bg = cv2.cvtColor(img1_bg, cv2.COLOR_BGR2RGB)
-    out_img = cv2.add(img1_bg, img2_fg)
+    img1_bg = cv2.cvtColor(img_bg, cv2.COLOR_BGR2RGB)
+    out_img = cv2.add(img_bg, img_fg[:, :, 0:3])
 
     if debug:
         for i in six_points:
@@ -340,9 +291,6 @@ def mask_face(image, six_points, angle, T, type="surgical"):
             cv2.circle(
                 out_img, (i[0][0], i[0][1]), radius=4, color=(0, 255, 0), thickness=-1
             )
-
-    # cv2.imshow("i", out_img)
-    # cv2.waitKey(0)
 
     return out_img
 
@@ -354,6 +302,3 @@ def draw_landmarks(face_landmarks, image):
         d.line(face_landmarks[facial_feature], width=5, fill="white")
 
     pil_image.show()
-
-
-
