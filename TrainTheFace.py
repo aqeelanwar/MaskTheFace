@@ -12,7 +12,7 @@ DNN = DNN(num_classes=num_classes)
 batch_size = 32
 
 iteration = 0
-lr = 1e-7
+lr = 1e-6
 num_epochs = 100
 
 for epoch in range(num_epochs):
@@ -25,7 +25,7 @@ for epoch in range(num_epochs):
     for i in range(n):
         input = X_train[i * batch_size: (i + 1) * batch_size]
         labels = Y_train[i * batch_size: (i + 1) * batch_size]
-        loss, acc = DNN.train(input, labels, lr, iteration)
+        loss, acc = DNN.train(input, labels, lr, iteration, keep_prob=0.8)
         print('Epoch: {:3} Iter: {:3}/{:3} Loss: {:2.6f} Acc: {:2.3f}'.format(epoch, i, n-1, loss, acc))
     # At the end of each epoch, show test accuracy
     test_acc = 0
@@ -33,9 +33,13 @@ for epoch in range(num_epochs):
         input = X_test[j * batch_size : (j + 1) * batch_size]
         labels = Y_test[j * batch_size : (j + 1) * batch_size]
         acc = DNN.get_accuracy(input, labels)
-        test_acc = test_acc + acc[1] * input.shape[0]
+        test_acc = test_acc + acc * input.shape[0]
 
     test_acc /= X_test.shape[0]
+    DNN.log_to_tensorboard(tag='Test Acc', group='Test', value=test_acc, index=epoch)
     print('-------------------------------------------------')
     print("Epoch: {:3} Test Acc: {:2.3f}".format(epoch, test_acc))
     print('-------------------------------------------------')
+
+    # Save the current network
+    DNN.save_network(epoch)

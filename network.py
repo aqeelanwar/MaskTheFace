@@ -4,11 +4,11 @@ import numpy as np
 
 
 class VGGNet16(object):
-    def __init__(self, input, num_classes):
+    def __init__(self, input, num_classes, keep_prob=0.8):
         self.input = input
         # Block 1
         self.conv1 = self.conv(self.input, k=3, out=64, s=1, p="SAME")
-        self.conv2 = self.conv(self.conv1, k=3, out=64, s=1, p="SAME")
+        self.conv2 = self.conv(self.conv1, k=3, out=64, s=1, p="SAME", lrn=True)
         self.mp1 = tf.nn.max_pool(
             self.conv2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding="VALID"
         )
@@ -44,17 +44,19 @@ class VGGNet16(object):
         self.fc14 = self.FullyConnected(
             self.flat, units_in=25088, units_out=4096, act="relu"
         )
+        self.fc14_drop = tf.nn.dropout(self.fc14, keep_prob=keep_prob)
         self.fc15 = self.FullyConnected(
-            self.fc14, units_in=4096, units_out=4096, act="relu"
+            self.fc14_drop, units_in=4096, units_out=4096, act="relu"
         )
+        self.fc15_drop = tf.nn.dropout(self.fc15, keep_prob=keep_prob)
         self.fc16 = self.FullyConnected(
-            self.fc15, units_in=4096, units_out=num_classes, act="relu"
+            self.fc15_drop, units_in=4096, units_out=num_classes, act="linear"
         )
 
         self.prediction_probs = tf.nn.softmax(self.fc16)
         self.output = self.fc16
 
-    def conv(self, input, k, out, s, p, trainable=True):
+    def conv(self, input, k, out, s, p, lrn=False, trainable=True):
 
         W = tf.Variable(
             tf.truncated_normal(shape=(k, k, int(input.shape[3]), out), stddev=0.05),
@@ -66,6 +68,8 @@ class VGGNet16(object):
 
         conv_kernel_1 = tf.nn.conv2d(input, W, [1, s, s, 1], padding=p)
         bias_layer_1 = tf.nn.bias_add(conv_kernel_1, tf.Variable(b, trainable))
+        if lrn:
+            bias_layer_1 = tf.nn.local_response_normalization(bias_layer_1)
 
         return tf.nn.relu(bias_layer_1)
 

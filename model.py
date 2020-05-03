@@ -21,6 +21,7 @@ class DNN:
 
             # Placeholders
             self.batch_size = tf.placeholder(tf.int32, shape=())
+            self.keep_prob = tf.placeholder(tf.float32, shape=())
             self.learning_rate = tf.placeholder(tf.float32, shape=())
             self.input_images = tf.placeholder(
                 tf.float32, [None, None, None, 3], name="input"
@@ -35,12 +36,12 @@ class DNN:
                 lambda frame: tf.image.per_image_standardization(frame), self.X,
             )
 
-            self.model = VGGNet16(self.input, num_classes)
+            self.model = VGGNet16(self.input, num_classes, self.keep_prob)
 
             self.output = self.model.output
             self.prediction_probs = self.model.prediction_probs
             self.predict_class = tf.argmax(self.prediction_probs, axis=1)
-            self.accuracy = tf.metrics.accuracy(
+            self.accuracy, self.accuracy_op = tf.metrics.accuracy(
                 labels=self.labels, predictions=self.predict_class
             )
 
@@ -69,19 +70,21 @@ class DNN:
                 self.learning_rate: 0,
                 self.input_images: input,
                 self.labels: labels,
+                self.keep_prob: 1.0
             },
         )
         return predict_class, prediction_probs
 
-    def train(self, input, labels, lr, iter):
+    def train(self, input, labels, lr, iter, keep_prob):
         labels = np.squeeze(labels)
         _, loss, acc = self.sess.run(
-            [self.train_op, self.loss, self.accuracy],
+            [self.train_op, self.loss, self.accuracy_op],
             feed_dict={
                 self.batch_size: input.shape[0],
                 self.learning_rate: lr,
                 self.input_images: input,
                 self.labels: labels,
+                self.keep_prob: keep_prob
             },
         )
         # Log to tensorboard
@@ -89,10 +92,10 @@ class DNN:
             tag="Loss", group="Main", value=loss, index=iter, type="loss"
         )
         self.log_to_tensorboard(
-            tag="Acc", group="Main", value=acc[1], index=iter, type="loss"
+            tag="Acc", group="Main", value=acc, index=iter, type="loss"
         )
 
-        return loss, acc[1]
+        return loss, acc
 
 
     def log_to_tensorboard(self, tag, group, value, index, type="loss"):
@@ -107,18 +110,18 @@ class DNN:
     def get_accuracy(self, input, labels):
         labels = np.squeeze(labels)
         accuracy = self.sess.run(
-            self.accuracy,
+            self.accuracy_op,
             feed_dict={
                 self.batch_size: input.shape[0],
                 self.learning_rate: 0,
                 self.input_images: input,
                 self.labels: labels,
+                self.keep_prob: 1.0
             },
         )
         return accuracy
 
-    # def evaluate(self, all_input, all_labels, batch_size):
-    #     n = np.ceil(all_input.shape[0]/batch_size)
-    #
-    #     for i in range(n):
-    #         # sample the test dataset
+    def save_network(self, epoch):
+        save_path = 'saved_network/net_' + str(epoch)+'.ckpt'
+        self.saver.save(self.sess, save_path)
+        print('Model Saved: ', save_path)
