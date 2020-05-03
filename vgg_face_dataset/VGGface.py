@@ -4,7 +4,8 @@
 import os
 import numpy as np
 import urllib.request
-import cv2
+import cv2, time
+from tqdm import tqdm
 
 
 def url_to_image(url):
@@ -30,8 +31,10 @@ abs_path = os.path.abspath(os.getcwd())
 if not os.path.isdir(abs_path + "/subset"):
     os.mkdir(abs_path + "/subset")
 
-
-for person in files[0:2]:
+p=0
+start_time = time.time()
+for person in tqdm(files[0:20]):
+    p+=1
     write_file = abs_path + "/subset" + "/" + person.rsplit(".", 1)[0]
     if not os.path.isdir(write_file):
         os.mkdir(write_file)
@@ -56,10 +59,10 @@ for person in files[0:2]:
                 width = right - left
                 height = bottom - top
 
-                # left -= int(width / 5)
-                # right += int(width / 5)
-                # top -= int(height / 5)
-                # bottom += int(height / 5)
+                left -= int(width / 5)
+                right += int(width / 5)
+                top -= int(height / 2.5)
+                bottom += int(height / 10)
 
                 # cv2.imshow("cropped", image)
                 # cv2.waitKey(0)
@@ -72,14 +75,13 @@ for person in files[0:2]:
                     cc = 1
 
                 if cropped_image.size != 0:
-                    cropped_image = cv2.resize(cropped_image, (224, 224))
+                    # cropped_image = cv2.resize(cropped_image, (224, 224))
                     num = str(i).zfill(5)
                     write_filepath = (
                         write_file + "/" + num + ".png"
                     )
                     cv2.imwrite(write_filepath, cropped_image)
-
-                    print(i)
+                    # print("Person {:2%}:{:2%}".format(p, i), end="\r")
                     i += 1
 
-    # print(f.read())
+print('Total Time: ', time.time()-start_time)
