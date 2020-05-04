@@ -5,17 +5,30 @@
 from model import DNN
 from dataset_functions import *
 
-data, num_classes = get_dataset(path='vgg_face_dataset/subset', img_size=224)
-X_train, Y_train, Y_train_label, X_test, Y_test, Y_test_label = split_dataset(data=data, train_ratio=0.8)
-
+# data, num_classes = get_dataset(path='vgg_face_dataset/subset', img_size=224)
+# data, num_classes = get_vggface2(path='F:\VGGface2/vggface2_train/train', img_size=224, num_classes=20)
+# analyze_dataset(data, num_classes)
+# X_train, Y_train, Y_train_label, X_test, Y_test, Y_test_label = split_dataset(data=data, train_ratio=0.8)
+# np.save('data_split.npy', (X_train, Y_train, Y_train_label, X_test, Y_test, Y_test_label))
+print('Loading data')
+X_train, Y_train, Y_train_label, X_test, Y_test, Y_test_label = np.load('data_split.npy')
+num_classes = 20
+# s = np.mean(Y_test)
+# d = np.mean(Y_train)
+print('Setting up DNN')
 DNN = DNN(num_classes=num_classes)
-batch_size = 32
+network_path = 'saved_network/VGG16_821/net_30.ckpt'
+# network_path = 'saved_network/net_27.ckpt'
+# DNN.load_network(network_path)
+batch_size = 16
 
 iteration = 0
-lr = 1e-6
+lr = 1e-5
 num_epochs = 100
 
 for epoch in range(num_epochs):
+    if epoch>0:
+        lr /=epoch
     # Shuffle the dataset
     random.Random(4).shuffle(X_train)
     random.Random(4).shuffle(Y_train)
@@ -30,6 +43,7 @@ for epoch in range(num_epochs):
     # At the end of each epoch, show test accuracy
     test_acc = 0
     for j in range(m):
+        # TODO when num remaining elements < batchsize
         input = X_test[j * batch_size : (j + 1) * batch_size]
         labels = Y_test[j * batch_size : (j + 1) * batch_size]
         acc = DNN.get_accuracy(input, labels)
@@ -37,9 +51,9 @@ for epoch in range(num_epochs):
 
     test_acc /= X_test.shape[0]
     DNN.log_to_tensorboard(tag='Test Acc', group='Test', value=test_acc, index=epoch)
-    print('-------------------------------------------------')
+    print('--------------------------------------------------------')
     print("Epoch: {:3} Test Acc: {:2.3f}".format(epoch, test_acc))
-    print('-------------------------------------------------')
-
     # Save the current network
     DNN.save_network(epoch)
+    print('--------------------------------------------------------')
+

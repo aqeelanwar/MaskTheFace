@@ -62,7 +62,7 @@ class DNN:
             self.sess.graph.finalize()
 
     def predict(self, input):
-        labels = self.classes = tf.placeholder(tf.int32, shape=[None, self.num_classes])
+        labels = np.zeros(len(input))
         predict_class, prediction_probs = self.sess.run(
             [self.predict_class, self.prediction_probs],
             feed_dict={
@@ -77,8 +77,8 @@ class DNN:
 
     def train(self, input, labels, lr, iter, keep_prob):
         labels = np.squeeze(labels)
-        _, loss, acc = self.sess.run(
-            [self.train_op, self.loss, self.accuracy_op],
+        _, loss, predict_class = self.sess.run(
+            [self.train_op, self.loss, self.predict_class],
             feed_dict={
                 self.batch_size: input.shape[0],
                 self.learning_rate: lr,
@@ -87,6 +87,7 @@ class DNN:
                 self.keep_prob: keep_prob
             },
         )
+        acc = self.calculate_acc(labels, predict_class)
         # Log to tensorboard
         self.log_to_tensorboard(
             tag="Loss", group="Main", value=loss, index=iter, type="loss"
@@ -109,19 +110,28 @@ class DNN:
 
     def get_accuracy(self, input, labels):
         labels = np.squeeze(labels)
-        accuracy = self.sess.run(
-            self.accuracy_op,
+        predict_class = self.sess.run(
+            self.predict_class,
             feed_dict={
                 self.batch_size: input.shape[0],
-                self.learning_rate: 0,
+                self.learning_rate: 0.0,
                 self.input_images: input,
                 self.labels: labels,
                 self.keep_prob: 1.0
             },
         )
+        accuracy = self.calculate_acc(labels, predict_class)
         return accuracy
 
     def save_network(self, epoch):
         save_path = 'saved_network/net_' + str(epoch)+'.ckpt'
         self.saver.save(self.sess, save_path)
         print('Model Saved: ', save_path)
+
+    def load_network(self, load_path):
+        # load_path = 'saved_network/net_' + str(epoch)+'.ckpt'
+        self.saver.restore(self.sess, load_path)
+        print('Model Restored: ', load_path)
+
+    def calculate_acc(self, label1, label2):
+        return np.sum(label1==label2)/len(label1)

@@ -10,6 +10,8 @@ saved_network
 loss
 z_detect_face.py
 z_main.py
+*.npy
+*.Lnk
 
 
 
