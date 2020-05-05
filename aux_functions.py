@@ -395,6 +395,7 @@ def mask_image(image_path, mask_type, verbose):
         tqdm.write('Faces found: {:2d}'.format(len(face_locations)))
     # Process each face in the image
     masked_images = []
+    mask = []
     for i, (face_landmarks, face_location) in enumerate(zip(face_landmarks_list, face_locations)):
         # Get key points
         # if verbose:

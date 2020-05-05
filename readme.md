@@ -39,3 +39,11 @@ python mask_the_face.py --path 'data/office.jpg' --mask_type 'N95' --verbose
 * __--path__: is used to provide the path of the image file or the directory containing face images.
 * __--mask_type__: is used to select the mask to be applied. Available options are 'N95', 'surgical_blue', 'surgical_green', 'cloth'. More masks will be added
 * __--verbose__: used to display useful messages during conversion
+
+## Features:
+### Support for both single and multi-face images:
+![cover_photo](images/multiface.png)
+### Wide angle coverage
+![cover_photo](images/angle.png)
+### Brightness correction
+![cover_photo](images/brightness.png)
