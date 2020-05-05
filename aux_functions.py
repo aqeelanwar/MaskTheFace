@@ -3,6 +3,7 @@
 # Email: aqeel.anwar@gatech.edu
 
 import numpy as np
+from configparser import ConfigParser
 import cv2, math, os, random
 from PIL import Image, ImageDraw
 from tqdm import tqdm
@@ -191,7 +192,7 @@ def get_six_points(face_landmark, image):
     points = get_points_on_chin(nose_mid_line, face_landmark)
     if len(points) < 2:
         face_landmark = get_face_ellipse(face_landmark)
-        print("extrapolating chin")
+        # print("extrapolating chin")
         points = get_points_on_chin(
             nose_mid_line, face_landmark, chin_type="chin_extrapolated"
         )
@@ -367,3 +368,86 @@ def change_saturation(img, value=1.0):
     final_hsv = cv2.merge((h, s, v))
     img = cv2.cvtColor(final_hsv, cv2.COLOR_HSV2BGR)
     return img
+
+
+def check_path(path):
+    is_directory = False
+    is_file = False
+    is_other = False
+    if os.path.isdir(path):
+        is_directory = True
+    elif os.path.isfile(path):
+        is_file = True
+    else:
+        is_other = True
+
+    return is_directory, is_file, is_other
+
+def mask_image(image_path, mask_type, verbose):
+    # Get face landmarks
+    image = face_recognition.load_image_file(image_path)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    face_landmarks_list = face_recognition.face_landmarks(image)
+    face_locations = face_recognition.face_locations(image)
+    # draw_landmarks(face_landmarks_list[0], image)
+
+    if verbose:
+        tqdm.write('Faces found: {:2d}'.format(len(face_locations)))
+    # Process each face in the image
+    masked_images = []
+    for i, (face_landmarks, face_location) in enumerate(zip(face_landmarks_list, face_locations)):
+        # Get key points
+        # if verbose:
+        #     print('Processing Face: ', i)
+        six_points_on_face, angle = get_six_points(face_landmarks, image)
+        plot_lines(six_points_on_face, image, debug=False)
+        # Put mask on face
+
+        mask = []
+        if mask_type != 'all':
+            if len(masked_images)>0:
+                image = masked_images.pop(0)
+            image = mask_face(
+                image, face_location, six_points_on_face, angle, type=mask_type
+            )
+            masked_images.append(image)
+            mask.append(mask_type)
+        else:
+            available_mask_types = get_available_mask_types()
+            for m in range(len(available_mask_types)):
+                if len(masked_images)==len(available_mask_types):
+                    image = masked_images.pop(m)
+                img = mask_face(
+                    image, face_location, six_points_on_face, angle, type=available_mask_types[m]
+                )
+                masked_images.insert(m, img)
+            mask = available_mask_types
+            cc=1
+    return masked_images, mask
+
+def is_image(path):
+    image_extensions = ['png', 'PNG', 'jpg', 'JPG']
+    split = path.rsplit('.')
+    if split[1] in image_extensions:
+        return True
+    else:
+        return False
+
+def get_available_mask_types(config_filename="masks/masks.cfg"):
+    parser = ConfigParser()
+    parser.optionxform = str
+    parser.read(config_filename)
+    available_mask_types = parser.sections()
+    available_mask_types = [string for string in available_mask_types if "left" not in string]
+    available_mask_types = [string for string in available_mask_types if "right" not in string]
+
+    return available_mask_types
+
+def print_orderly(str, n):
+    print('')
+    hyphens = '-' * int((n - len(str)) / 2)
+    str_p = hyphens + ' ' + str + ' ' + hyphens
+    hyphens_bar = '-' * len(str_p)
+    print(hyphens_bar)
+    print(str_p)
+    print(hyphens_bar)

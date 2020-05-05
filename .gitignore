@@ -12,7 +12,8 @@ z_detect_face.py
 z_main.py
 *.npy
 *.Lnk
-
-
+data1
+data1_masked
+scratch.py
 
 
