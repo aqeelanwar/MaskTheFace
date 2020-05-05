@@ -27,7 +27,7 @@ parser.add_argument(
 #     default=False,
 #     help="Turn verbosity on/off. True or False",
 # )
-parser.add_argument('--verbose', dest='verbose', action='store_true')
+parser.add_argument('--verbose', dest='verbose', action='store_true', help="Turn verbosity on")
 parser.set_defaults(feature=False)
 
 args = parser.parse_args()
