@@ -2,8 +2,8 @@
 # Created: 27 April,2020, 10:22 PM
 # Email: aqeel.anwar@gatech.edu
 
-import face_recognition, argparse
-from aux_functions import *
+import argparse
+from utils.aux_functions import *
 
 # Command-line input setup
 parser = argparse.ArgumentParser(

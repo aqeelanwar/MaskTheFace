@@ -2,13 +2,12 @@
 # Created: 27 April,2020, 10:21 PM
 # Email: aqeel.anwar@gatech.edu
 
-import numpy as np
 from configparser import ConfigParser
-import cv2, math, os, random
+import cv2, math, os
 from PIL import Image, ImageDraw
 from tqdm import tqdm
-from read_cfg import read_cfg
-from fit_ellipse import *
+from utils.read_cfg import read_cfg
+from utils.fit_ellipse import *
 import face_recognition
 
 
@@ -468,7 +467,7 @@ def print_orderly(str, n):
 
 
 def display_MaskTheFace():
-    with open("display.txt", "r") as file:
+    with open("utils/display.txt", "r") as file:
         for line in file:
             cc=1
             print(line, end='')
