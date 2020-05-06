@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "--path",
     type=str,
-    default="F:\VGGface2/vggface2_train\subset/n000014/0088_01.jpg",
+    default="data1",
     help="Path to the folder containing images within folders as classes",
 )
 parser.add_argument(
@@ -34,7 +34,7 @@ args = parser.parse_args()
 args.write_path = args.path + "_masked"
 # Check in path is file or directory or none
 is_directory, is_file, is_other = check_path(args.path)
-
+display_MaskTheFace()
 if is_directory:
     path, dirs, files = os.walk(args.path).__next__()
     file_count = len(files)
@@ -42,18 +42,20 @@ if is_directory:
 
     # Deal files first
     # tqdm.write("Masking image files")
-    print_orderly("Masking image files", 80)
+    print_orderly("Masking image files", 60)
     for f in tqdm(files):
         image_path = path + "/" + f
-        if args.verbose:
-            str_p = 'Processing: ' + image_path
-            tqdm.write(str_p)
+
         write_path = path + "_masked"
         if not os.path.isdir(write_path):
             os.makedirs(write_path)
 
         if is_image(image_path):
             # Proceed if file is image
+            if args.verbose:
+                str_p = 'Processing: ' + image_path
+                tqdm.write(str_p)
+
             split_path = f.rsplit(".")
             image, mask = mask_image(image_path, args.mask_type, args.verbose)
             for i in range(len(mask)):
@@ -69,7 +71,7 @@ if is_directory:
                 img = image[i]
                 cv2.imwrite(w_path, img)
 
-    print_orderly("Masking image directories", 80)
+    print_orderly("Masking image directories", 60)
     for d in tqdm(dirs):
         dir_path = args.path + "/" + d
         dir_write_path = args.write_path + "/" + d

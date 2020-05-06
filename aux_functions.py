@@ -399,7 +399,7 @@ def mask_image(image_path, mask_type, verbose):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     face_landmarks_list = face_recognition.face_landmarks(image)
     face_locations = face_recognition.face_locations(image)
-    draw_landmarks(face_landmarks_list[0], image)
+    # draw_landmarks(face_landmarks_list[0], image)
 
     if verbose:
         tqdm.write('Faces found: {:2d}'.format(len(face_locations)))
@@ -437,6 +437,9 @@ def mask_image(image_path, mask_type, verbose):
     return masked_images, mask
 
 def is_image(path):
+    split = path.rsplit('/')
+    if split[1][0]=='.':
+        return False
     image_extensions = ['png', 'PNG', 'jpg', 'JPG']
     split = path.rsplit('.')
     if split[1] in image_extensions:
@@ -462,3 +465,10 @@ def print_orderly(str, n):
     print(hyphens_bar)
     print(str_p)
     print(hyphens_bar)
+
+
+def display_MaskTheFace():
+    with open("display.txt", "r") as file:
+        for line in file:
+            cc=1
+            print(line, end='')
