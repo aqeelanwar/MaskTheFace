@@ -48,3 +48,13 @@ python mask_the_face.py --path 'data/office.jpg' --mask_type 'N95' --verbose
 ![cover_photo](images/brightness.png)
 ### Bulk masking on datasets
 ![cover_photo](images/dataset.png)
+
+## Example usage
+
+### Face recognition with masks
+Face recognition trained to usual face images have proven to given good accuracy.
+In the recent ongoing outbreak of Covid19, people have been advised to use face masks. With majority of people using face masks, the face recognition system fails to perform.
+MaskTheFace can be used to create masked data set from unmasked dataset which is then used to finetune the existing face recognition system.
+
+
+### Monitoring if people are using masks
