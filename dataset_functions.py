@@ -132,6 +132,58 @@ def get_vggface2(path, img_size, num_classes,split_ratio=0.8, seed=1):
     cc=1
     return X_train, Y_train, np.asarray(Y_train_label), X_test, Y_test, np.asarray(Y_test_label), num_classes
 
+def get_vggface2_mask_no_mask(path, img_size, num_classes,split_ratio=0.8, seed=1):
+    print('Converting images to dataset')
+    path, dirs, files = os.walk(path).__next__()
+    dir_array = []
+    X_train =[]
+    Y_train=[]
+    Y_train_label=[]
+    X_test=[]
+    Y_test=[]
+    Y_test_label = []
+    mm = min(num_classes, len(dirs))
+    for i in tqdm(range(mm)):
+        dir_array.append(dirs[i])
+        # Read Image
+        # Resize
+        # Append
+        # label = i
+        # label_name = dirs[i]
+        # label_name = ''
+        sub_path = path + "/" + dirs[i]
+        _, subdirs, files = os.walk(sub_path).__next__()
+        num = len(files)
+        mask_array =  ['surgical_blue', 'surgical_green', 'N95', 'cloth']
+        for f in range(num):
+            src = sub_path + "/" + files[f]
+            label = 0
+            label_name = 'NoMask'
+            for mask_type in mask_array:
+                if mask_type in files[f]:
+                    label = 1
+                    label_name = 'Mask'
+
+            img = cv2.imread(src)
+            img = cv2.resize(img, (img_size, img_size))
+            if f < split_ratio*len(files):
+                X_train.append(img)
+                Y_train.append(label)
+                Y_train_label.append(label_name)
+            else:
+                X_test.append(img)
+                Y_test.append(label)
+                Y_test_label.append(label_name)
+
+    #Shuffle the data
+    # random.Random(4).shuffle(data)
+    test_mean = np.mean(Y_test)
+    test_std = np.std(Y_test)
+    train_mean = np.mean(Y_train)
+    train_std = np.std(Y_train)
+    cc=1
+    return X_train, Y_train, np.asarray(Y_train_label), X_test, Y_test, np.asarray(Y_test_label), num_classes
+
 def get_vggface2_raw(path, img_size, num_classes,split_ratio=0.8, seed=1):
     print('Converting images to dataset')
     path, dirs, files = os.walk(path).__next__()

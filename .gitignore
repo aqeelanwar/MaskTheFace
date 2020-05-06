@@ -17,3 +17,4 @@ data1_masked
 scratch.py
 subset
 subset_masked
+vgg_face_dataset
