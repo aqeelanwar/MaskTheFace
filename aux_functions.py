@@ -155,7 +155,7 @@ def line_intersection(line1, line2):
     segment_minY = min(line2[0][1], line2[1][1])
     segment_maxY = max(line2[0][1], line2[1][1])
 
-    if segment_maxX >= x >= segment_minX and segment_maxY >= y >= segment_minY:
+    if segment_maxX+1 >= x >= segment_minX-1 and segment_maxY+1 >= y >= segment_minY-1:
         flag = True
 
     return flag, x, y
@@ -166,7 +166,7 @@ def fit_line(x, y, image):
         x[0] += 0.1
     coefficients = np.polyfit(x, y, 1)
     polynomial = np.poly1d(coefficients)
-    x_axis = np.linspace(0, image.shape[1], 500)
+    x_axis = np.linspace(0, image.shape[1], 50)
     y_axis = polynomial(x_axis)
     eye_line = []
     for i in range(len(x_axis)):
@@ -182,7 +182,12 @@ def get_six_points(face_landmark, image):
     perp_line, _, _, _, _ = get_line(face_landmark, image, type="perp_line")
     points1 = get_points_on_chin(perp_line1, face_landmark)
     points = get_points_on_chin(perp_line, face_landmark)
-    face_e = tuple((np.asarray(points[0]) + np.asarray(points1[0])) / 2)
+    if not points1:
+        face_e = tuple(np.asarray(points[0]))
+    elif not points:
+        face_e = tuple(np.asarray(points1[0]))
+    else:
+        face_e = tuple((np.asarray(points[0]) + np.asarray(points1[0])) / 2)
     # face_e = points1[0]
     nose_mid_line, _, _, _, _ = get_line(face_landmark, image, type="nose_long")
 
@@ -196,13 +201,18 @@ def get_six_points(face_landmark, image):
         points = get_points_on_chin(
             nose_mid_line, face_landmark, chin_type="chin_extrapolated"
         )
+        if len(points)<2:
+            points=[]
+            points.append(face_landmark['chin'][0])
+            points.append(face_landmark['chin'][-1])
     face_a = points[0]
-    face_c = points[1]
-
+    face_c = points[-1]
+    # cv2.imshow('j', image)
+    # cv2.waitKey(0)
     nose_mid_line, _, _, _, _ = get_line(face_landmark, image, type="bottom_lip")
     points = get_points_on_chin(nose_mid_line, face_landmark)
     face_d = points[0]
-    face_f = points[1]
+    face_f = points[-1]
 
     six_points = np.float32([face_a, face_b, face_c, face_f, face_e, face_d])
 
@@ -389,7 +399,7 @@ def mask_image(image_path, mask_type, verbose):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     face_landmarks_list = face_recognition.face_landmarks(image)
     face_locations = face_recognition.face_locations(image)
-    # draw_landmarks(face_landmarks_list[0], image)
+    draw_landmarks(face_landmarks_list[0], image)
 
     if verbose:
         tqdm.write('Faces found: {:2d}'.format(len(face_locations)))

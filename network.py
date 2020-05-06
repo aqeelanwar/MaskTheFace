@@ -56,14 +56,14 @@ class VGGNet16(object):
         self.prediction_probs = tf.nn.softmax(self.fc16)
         self.output = self.fc16
 
-    def conv(self, input, k, out, s, p, lrn=False, trainable=True):
+    def conv(self, input, k, out, s, p, lrn=True, trainable=True):
 
         W = tf.Variable(
-            tf.truncated_normal(shape=(k, k, int(input.shape[3]), out), stddev=0.05, seed=1),
+            tf.truncated_normal(shape=(k, k, int(input.shape[3]), out), stddev=0.01, seed=1),
             trainable=trainable
         )
         b = tf.Variable(
-            tf.truncated_normal(shape=[out], stddev=0.05, seed=1),
+            tf.truncated_normal(shape=[out], stddev=0.01, seed=1),
             trainable=trainable
         )
 
@@ -78,11 +78,11 @@ class VGGNet16(object):
 
     def FullyConnected(self, input, units_in, units_out, act, trainable=True):
         W = tf.Variable(
-            tf.truncated_normal(shape=(units_in, units_out), stddev=0.05, seed=1),
+            tf.truncated_normal(shape=(units_in, units_out), stddev=0.01, seed=1),
             trainable=trainable
         )
         b = tf.Variable(
-            tf.truncated_normal(shape=[units_out], stddev=0.05, seed=1),
+            tf.truncated_normal(shape=[units_out], stddev=0.01, seed=1),
             trainable=trainable
         )
 

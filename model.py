@@ -35,28 +35,31 @@ class DNN:
             self.input = tf.map_fn(
                 lambda frame: tf.image.per_image_standardization(frame), self.X,
             )
+            # self.input = self.input_images
 
             self.model = VGGNet16(self.input, num_classes, self.keep_prob)
 
             self.output = self.model.output
             self.prediction_probs = self.model.prediction_probs
             self.predict_class = tf.argmax(self.prediction_probs, axis=1)
-            self.accuracy, self.accuracy_op = tf.metrics.accuracy(
-                labels=self.labels, predictions=self.predict_class
-            )
+
+            # self.accuracy, self.accuracy_op = tf.metrics.accuracy(
+            #     labels=self.labels, predictions=self.predict_class
+            # )
 
             self.test = tf.nn.sparse_softmax_cross_entropy_with_logits(
                 labels=self.labels, logits=self.output
             )
+            # self.test = -tf.reduce_sum(self.labels * tf.log(tf.nn.softmax(self.output) + 1e-10),1)
             self.loss = tf.reduce_mean(self.test)
             self.train_op = tf.train.AdamOptimizer(
                 learning_rate=self.learning_rate, beta1=0.9, beta2=0.99
             ).minimize(self.loss, name="train_op")
 
             self.sess = tf.InteractiveSession(config=config)
+            self.saver = tf.train.Saver()
             tf.global_variables_initializer().run()
             tf.local_variables_initializer().run()
-            self.saver = tf.train.Saver()
             self.all_vars = tf.trainable_variables()
 
             self.sess.graph.finalize()
@@ -77,6 +80,19 @@ class DNN:
 
     def train(self, input, labels, lr, iter, keep_prob):
         labels = np.squeeze(labels)
+
+        # loss, pred, test, oy, p_c = self.sess.run(
+        #     [self.loss, self.prediction_probs, self.test, self.output, self.predict_class],
+        #     feed_dict={
+        #         self.batch_size: input.shape[0],
+        #         self.learning_rate: 0.0,
+        #         self.input_images: input,
+        #         self.labels: labels,
+        #         self.keep_prob: 1.0
+        #     },
+        # )
+        #
+
         _, loss, predict_class = self.sess.run(
             [self.train_op, self.loss, self.predict_class],
             feed_dict={
@@ -122,6 +138,21 @@ class DNN:
         )
         accuracy = self.calculate_acc(labels, predict_class)
         return accuracy
+
+    def get_accuracy2(self, input, labels):
+        labels = np.squeeze(labels)
+        loss, pred, test, oy, p_c = self.sess.run(
+            [self.loss, self.prediction_probs, self.test, self.output, self.predict_class] ,
+            feed_dict={
+                self.batch_size: input.shape[0],
+                self.learning_rate: 0.0,
+                self.input_images: input,
+                self.labels: labels,
+                self.keep_prob: 1.0
+            },
+        )
+        # accuracy = self.calculate_acc(labels, predict_class)
+        return 0
 
     def save_network(self, epoch):
         save_path = 'saved_network/net_' + str(epoch)+'.ckpt'

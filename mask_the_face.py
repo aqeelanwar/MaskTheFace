@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "--path",
     type=str,
-    default="data1/joker.jpg",
+    default="F:\VGGface2/vggface2_train\subset/n000014/0088_01.jpg",
     help="Path to the folder containing images within folders as classes",
 )
 parser.add_argument(
@@ -50,7 +50,7 @@ if is_directory:
             tqdm.write(str_p)
         write_path = path + "_masked"
         if not os.path.isdir(write_path):
-            os.mkdir(write_path)
+            os.makedirs(write_path)
 
         if is_image(image_path):
             # Proceed if file is image
@@ -74,7 +74,7 @@ if is_directory:
         dir_path = args.path + "/" + d
         dir_write_path = args.write_path + "/" + d
         if not os.path.isdir(dir_write_path):
-            os.mkdir(dir_write_path)
+            os.makedirs(dir_write_path)
         _, _, files = os.walk(dir_path).__next__()
         for f in files:
             image_path = dir_path + "/" + f
