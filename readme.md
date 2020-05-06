@@ -58,3 +58,8 @@ MaskTheFace can be used to create masked data set from unmasked dataset which is
 
 
 ### Monitoring if people are using masks
+
+
+
+## Citation
+If you find this repository useful, please use following citation
