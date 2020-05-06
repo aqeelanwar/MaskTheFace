@@ -1,6 +1,5 @@
 # MaskTheFace - Convert face dataset to masked dataset
 ![cover_photo](images/MaskTheFace.png)
-
 ## What is MaskTheFace?
 MaskTheFace is computer vision based scripts to mask faces in images. It provides a number of masks to select from.  
 It is difficult to collect mask dataset under various conditions. MaskTheFace can be used to convert any existing face dataset to masked-face dataset.
@@ -43,9 +42,9 @@ python mask_the_face.py --path 'data/office.jpg' --mask_type 'N95' --verbose
 ## Features:
 ### Support for both single and multi-face images:
 ![cover_photo](images/multiface.png)
-### Wide angle coverage
+### Wide face angle coverage
 ![cover_photo](images/angle.png)
-### Brightness correction
+### Brightness corrected mask application
 ![cover_photo](images/brightness.png)
-### Bulk masking
+### Bulk masking on datasets
 ![cover_photo](images/dataset.png)
