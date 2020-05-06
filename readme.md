@@ -47,3 +47,5 @@ python mask_the_face.py --path 'data/office.jpg' --mask_type 'N95' --verbose
 ![cover_photo](images/angle.png)
 ### Brightness correction
 ![cover_photo](images/brightness.png)
+### Bulk masking
+![cover_photo](images/dataset.png)
