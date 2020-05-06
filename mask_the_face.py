@@ -4,6 +4,7 @@
 
 import argparse
 from utils.aux_functions import *
+import random
 
 # Command-line input setup
 parser = argparse.ArgumentParser(

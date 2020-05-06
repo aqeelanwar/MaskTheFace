@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw
 from tqdm import tqdm
 from utils.read_cfg import read_cfg
 from utils.fit_ellipse import *
-import face_recognition
+import face_recognition, random
 
 
 def get_line(face_landmark, image, type="eye", debug=False):
@@ -399,6 +399,10 @@ def mask_image(image_path, mask_type, verbose):
     face_landmarks_list = face_recognition.face_landmarks(image)
     face_locations = face_recognition.face_locations(image)
     # draw_landmarks(face_landmarks_list[0], image)
+
+    if mask_type == 'random':
+        available_mask_types = get_available_mask_types()
+        mask_type = random.choice(available_mask_types)
 
     if verbose:
         tqdm.write('Faces found: {:2d}'.format(len(face_locations)))
