@@ -54,8 +54,7 @@ python mask_the_face.py --path 'data/office.jpg' --mask_type 'N95' --verbose
 
 ### Face recognition with masks
 Face recognition trained to usual face images have proven to given good accuracy.
-In the recent ongoing outbreak of Covid19, people have been advised to use face masks. With majority of people using face masks, the face recognition system fails to perform.  
-Due to limited mask images, there is not enough masked data available to train a new system.MaskTheFace can be used to create masked data set from unmasked dataset which is then used to finetune the existing or train a new face recognition system.
+In the recent ongoing outbreak of Covid19, people have been advised to use face masks. With majority of people using face masks, the face recognition system fails to perform. Due to limited mask images, there is not enough masked data available to train a new system.MaskTheFace can be used to create masked data set from unmasked dataset which is then used to finetune the existing or train a new face recognition system.
 
 A VGG16 network was trained on 20 different classes of VGGFace2 dataset for face recognition. The network achieved an accuracy of 68.3% on test dataset. When the same network was
 tested on the masked test images gave an accuracy of only 36.6%
