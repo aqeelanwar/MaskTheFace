@@ -13,13 +13,13 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "--path",
     type=str,
-    default="data1/a.jpg",
+    default="F:\lfw_182",
     help="Path to the folder containing images within folders as classes",
 )
 parser.add_argument(
     "--mask_type",
     type=str,
-    default="empty",
+    default="inpaint",
     help="Type of the mask to be applied. Available options: all, surgical_blue, surgical_green, N95, cloth",
 )
 # parser.add_argument(
@@ -99,6 +99,8 @@ if is_directory:
                         + "."
                         + split_path[1]
                     )
+
+
                     img = image[i]
                     cv2.imwrite(w_path, img)
 elif is_file:
