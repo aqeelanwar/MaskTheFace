@@ -43,7 +43,7 @@ if is_directory:
 
     # Deal files first
     # tqdm.write("Masking image files")
-    print_orderly("Masking image files", 60)
+    print_orderly("Masking image files", 57)
     for f in tqdm(files):
         image_path = path + "/" + f
 
@@ -72,7 +72,7 @@ if is_directory:
                 img = image[i]
                 cv2.imwrite(w_path, img)
 
-    print_orderly("Masking image directories", 60)
+    print_orderly("Masking image directories", 57)
     for d in tqdm(dirs):
         dir_path = args.path + "/" + d
         dir_write_path = args.write_path + "/" + d
