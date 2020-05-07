@@ -78,3 +78,6 @@ The detector above was trained on 2000 images (1000 mask, 1000 without mask) fro
 
 ## Citation
 If you find this repository useful, please use following citation
+```
+https://github.com/aqeelanwar/MaskTheFace
+```

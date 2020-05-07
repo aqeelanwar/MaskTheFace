@@ -13,7 +13,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "--path",
     type=str,
-    default="F:\lfw_182",
+    default="F:\lfw_182\Darren_Campel/Darren_Campel_0001.png",
     help="Path to the folder containing images within folders as classes",
 )
 parser.add_argument(
