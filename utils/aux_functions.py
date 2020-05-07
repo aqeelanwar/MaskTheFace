@@ -154,7 +154,10 @@ def line_intersection(line1, line2):
     segment_minY = min(line2[0][1], line2[1][1])
     segment_maxY = max(line2[0][1], line2[1][1])
 
-    if segment_maxX+1 >= x >= segment_minX-1 and segment_maxY+1 >= y >= segment_minY-1:
+    if (
+        segment_maxX + 1 >= x >= segment_minX - 1
+        and segment_maxY + 1 >= y >= segment_minY - 1
+    ):
         flag = True
 
     return flag, x, y
@@ -200,10 +203,10 @@ def get_six_points(face_landmark, image):
         points = get_points_on_chin(
             nose_mid_line, face_landmark, chin_type="chin_extrapolated"
         )
-        if len(points)<2:
-            points=[]
-            points.append(face_landmark['chin'][0])
-            points.append(face_landmark['chin'][-1])
+        if len(points) < 2:
+            points = []
+            points.append(face_landmark["chin"][0])
+            points.append(face_landmark["chin"][-1])
     face_a = points[0]
     face_c = points[-1]
     # cv2.imshow('j', image)
@@ -257,14 +260,23 @@ def mask_face(image, face_location, six_points, angle, type="surgical"):
         type += "_left"
 
     # Read appropriate mask image
-    cfg = read_cfg(config_filename="masks/masks.cfg", mask_type=type, verbose=False)
-    img = cv2.imread(cfg.template, cv2.IMREAD_UNCHANGED)
     w = image.shape[0]
     h = image.shape[1]
+    if not "empty" in type and not 'inpaint' in type:
+        cfg = read_cfg(config_filename="masks/masks.cfg", mask_type=type, verbose=False)
+    else:
+        if 'left' in type:
+            str = 'surgical_blue_left'
+        elif 'right' in type:
+            str = 'surgical_blue_right'
+        else:
+            str = 'surgical_blue'
+        cfg = read_cfg(config_filename="masks/masks.cfg", mask_type=str, verbose=False)
+    img = cv2.imread(cfg.template, cv2.IMREAD_UNCHANGED)
+
     mask_line = np.float32(
         [cfg.mask_a, cfg.mask_b, cfg.mask_c, cfg.mask_f, cfg.mask_e, cfg.mask_d]
     )
-
     # Warp the mask
     M, mask = cv2.findHomography(mask_line, six_points)
     dst_mask = cv2.warpPerspective(img, M, (h, w))
@@ -290,13 +302,20 @@ def mask_face(image, face_location, six_points, angle, type="surgical"):
     delta_s = 1 - (img_saturation - mask_saturation) / 255
     dst_mask = change_saturation(dst_mask, delta_s)
 
+
     # Apply mask
     mask_inv = cv2.bitwise_not(mask)
     img_bg = cv2.bitwise_and(image, image, mask=mask_inv)
     img_fg = cv2.bitwise_and(dst_mask, dst_mask, mask=mask)
     out_img = cv2.add(img_bg, img_fg[:, :, 0:3])
-
+    if 'empty' in type or 'inpaint' in type:
+        out_img = img_bg
     # Plot key points
+
+    if 'inpaint' in type:
+        out_img = cv2.inpaint(out_img, mask, 3, cv2.INPAINT_TELEA)
+        # dst_NS = cv2.inpaint(img, mask, 3, cv2.INPAINT_NS)
+
     if debug:
         for i in six_points:
             cv2.circle(out_img, (i[0], i[1]), radius=4, color=(0, 0, 255), thickness=-1)
@@ -392,6 +411,7 @@ def check_path(path):
 
     return is_directory, is_file, is_other
 
+
 def mask_image(image_path, mask_type, verbose):
     # Get face landmarks
     image = face_recognition.load_image_file(image_path)
@@ -400,16 +420,18 @@ def mask_image(image_path, mask_type, verbose):
     face_locations = face_recognition.face_locations(image)
     # draw_landmarks(face_landmarks_list[0], image)
 
-    if mask_type == 'random':
+    if mask_type == "random":
         available_mask_types = get_available_mask_types()
         mask_type = random.choice(available_mask_types)
 
     if verbose:
-        tqdm.write('Faces found: {:2d}'.format(len(face_locations)))
+        tqdm.write("Faces found: {:2d}".format(len(face_locations)))
     # Process each face in the image
     masked_images = []
     mask = []
-    for i, (face_landmarks, face_location) in enumerate(zip(face_landmarks_list, face_locations)):
+    for i, (face_landmarks, face_location) in enumerate(
+        zip(face_landmarks_list, face_locations)
+    ):
         # Get key points
         # if verbose:
         #     print('Processing Face: ', i)
@@ -418,8 +440,8 @@ def mask_image(image_path, mask_type, verbose):
         # Put mask on face
 
         mask = []
-        if mask_type != 'all':
-            if len(masked_images)>0:
+        if mask_type != "all":
+            if len(masked_images) > 0:
                 image = masked_images.pop(0)
             image = mask_face(
                 image, face_location, six_points_on_face, angle, type=mask_type
@@ -429,42 +451,53 @@ def mask_image(image_path, mask_type, verbose):
         else:
             available_mask_types = get_available_mask_types()
             for m in range(len(available_mask_types)):
-                if len(masked_images)==len(available_mask_types):
+                if len(masked_images) == len(available_mask_types):
                     image = masked_images.pop(m)
                 img = mask_face(
-                    image, face_location, six_points_on_face, angle, type=available_mask_types[m]
+                    image,
+                    face_location,
+                    six_points_on_face,
+                    angle,
+                    type=available_mask_types[m],
                 )
                 masked_images.insert(m, img)
             mask = available_mask_types
-            cc=1
+            cc = 1
     return masked_images, mask
 
+
 def is_image(path):
-    split = path.rsplit('/')
-    if split[1][0]=='.':
+    split = path.rsplit("/")
+    if split[1][0] == ".":
         return False
-    image_extensions = ['png', 'PNG', 'jpg', 'JPG']
-    split = path.rsplit('.')
+    image_extensions = ["png", "PNG", "jpg", "JPG"]
+    split = path.rsplit(".")
     if split[1] in image_extensions:
         return True
     else:
         return False
+
 
 def get_available_mask_types(config_filename="masks/masks.cfg"):
     parser = ConfigParser()
     parser.optionxform = str
     parser.read(config_filename)
     available_mask_types = parser.sections()
-    available_mask_types = [string for string in available_mask_types if "left" not in string]
-    available_mask_types = [string for string in available_mask_types if "right" not in string]
+    available_mask_types = [
+        string for string in available_mask_types if "left" not in string
+    ]
+    available_mask_types = [
+        string for string in available_mask_types if "right" not in string
+    ]
 
     return available_mask_types
 
+
 def print_orderly(str, n):
-    print('')
-    hyphens = '-' * int((n - len(str)) / 2)
-    str_p = hyphens + ' ' + str + ' ' + hyphens
-    hyphens_bar = '-' * len(str_p)
+    print("")
+    hyphens = "-" * int((n - len(str)) / 2)
+    str_p = hyphens + " " + str + " " + hyphens
+    hyphens_bar = "-" * len(str_p)
     print(hyphens_bar)
     print(str_p)
     print(hyphens_bar)
@@ -473,5 +506,5 @@ def print_orderly(str, n):
 def display_MaskTheFace():
     with open("utils/display.txt", "r") as file:
         for line in file:
-            cc=1
-            print(line, end='')
+            cc = 1
+            print(line, end="")
