@@ -60,7 +60,7 @@ A VGG16 network was trained on 20 different classes of VGGFace2 dataset for face
 tested on the masked test images gave an accuracy of only 36.6%
 MaskTheFace dataset was used to generate masked images from the training dataset and was made a part of training set. The network trained this dataset
 gave an accuracy of 70.7% on un-masked, while 65.5% on masked dataset.
-
+![cover_photo](images/face_recognition.png)
 
 
 
