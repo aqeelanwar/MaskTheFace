@@ -42,6 +42,8 @@ python mask_the_face.py --path 'data/office.jpg' --mask_type 'N95' --verbose
 
 
 ## Features:
+### Support for multiple mask types
+![cover_photo](images/example1.png)
 ### Support for both single and multi-face images:
 ![cover_photo](images/multiface.png)
 ### Wide face angle coverage
