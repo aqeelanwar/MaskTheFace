@@ -53,14 +53,11 @@ New masks are being added. Users, can also add custom masks following the guidel
 
 ### Mask Variations:
 Each of the mask types mentioned above can varied in the following terms to create even more masks
-1. Textures/Patterns variations:
-MaskTheFace provides 24 existing patterns that can be applied to mask types above to create more variations of the graph. Moreover, users can easily add custom patterns following the guidelines provided.
+#### 1. Textures/Patterns variations:MaskTheFace provides 24 existing patterns that can be applied to mask types above to create more variations of the graph. Moreover, users can easily add custom patterns following the guidelines provided.
 ![mask_textures](images/textures.png)
-2. Color varations:
-MaskTheFace provided script to modify existing mask types in terms of colors to generate variations of existing graphs.
+#### 2. Color varations:MaskTheFace provided script to modify existing mask types in terms of colors to generate variations of existing graphs.
 ![mask_colors](images/colors.png)
-3. Intensity varations:
-MaskTheFace provided script to modify existing mask types in terms of intensity to generate variations of existing graphs.
+####  3. Intensity varations:MaskTheFace provided script to modify existing mask types in terms of intensity to generate variations of existing graphs.
 ![mask_colors](images/intensities.png)
 
 
