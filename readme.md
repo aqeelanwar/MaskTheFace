@@ -41,6 +41,29 @@ python mask_the_face.py --path 'data/office.jpg' --mask_type 'N95' --verbose
 * __--verbose__: used to display useful messages during conversion
 
 
+## Supported Masks:
+### Mask Types:
+Currently MaskTheFace supports the following 4 mask types
+1. Surgical
+2. N95
+3. KN95
+4. Cloth
+
+New masks are being added. Users, can also add custom masks following the guidelines provided.
+
+### Mask Variations:
+Each of the mask types mentioned above can varied in the following terms to create even more masks
+1. Textures/Patterns variations:
+MaskTheFace provides 24 existing patterns that can be applied to mask types above to create more variations of the graph. Moreover, users can easily add custom patterns following the guidelines provided.
+![mask_textures](images/textures.png)
+2. Color varations:
+MaskTheFace provided script to modify existing mask types in terms of colors to generate variations of existing graphs.
+![mask_colors](images/colors.png)
+3. Intensity varations:
+MaskTheFace provided script to modify existing mask types in terms of intensity to generate variations of existing graphs.
+![mask_colors](images/intensities.png)
+
+
 ## Features:
 ### Support for multiple mask types
 ![cover_photo](images/example1.png)
