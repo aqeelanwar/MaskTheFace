@@ -9,6 +9,7 @@ from tqdm import tqdm
 from utils.read_cfg import read_cfg
 from utils.fit_ellipse import *
 import face_recognition, random
+from create_mask import texture_the_mask, color_the_mask
 
 
 def get_line(face_landmark, image, type="eye", debug=False):
@@ -249,7 +250,7 @@ def get_angle(line1, line2):
     return angle
 
 
-def mask_face(image, face_location, six_points, angle, type="surgical"):
+def mask_face(image, face_location, six_points, angle, args, type="surgical"):
     debug = False
 
     # Find the face angle
@@ -271,17 +272,26 @@ def mask_face(image, face_location, six_points, angle, type="surgical"):
     # Read appropriate mask image
     w = image.shape[0]
     h = image.shape[1]
-    if not "empty" in type and not 'inpaint' in type:
+    if not "empty" in type and not "inpaint" in type:
         cfg = read_cfg(config_filename="masks/masks.cfg", mask_type=type, verbose=False)
     else:
-        if 'left' in type:
-            str = 'surgical_blue_left'
-        elif 'right' in type:
-            str = 'surgical_blue_right'
+        if "left" in type:
+            str = "surgical_blue_left"
+        elif "right" in type:
+            str = "surgical_blue_right"
         else:
-            str = 'surgical_blue'
+            str = "surgical_blue"
         cfg = read_cfg(config_filename="masks/masks.cfg", mask_type=str, verbose=False)
     img = cv2.imread(cfg.template, cv2.IMREAD_UNCHANGED)
+
+    # Process the mask if necessary
+    if args.pattern:
+        # Apply pattern to mask
+        img = texture_the_mask(img, args.pattern, args.pattern_weight)
+
+    if args.color:
+        # Apply color to mask
+        img = color_the_mask(img, args.color, args.color_weight)
 
     mask_line = np.float32(
         [cfg.mask_a, cfg.mask_b, cfg.mask_c, cfg.mask_f, cfg.mask_e, cfg.mask_d]
@@ -311,17 +321,16 @@ def mask_face(image, face_location, six_points, angle, type="surgical"):
     delta_s = 1 - (img_saturation - mask_saturation) / 255
     dst_mask = change_saturation(dst_mask, delta_s)
 
-
     # Apply mask
     mask_inv = cv2.bitwise_not(mask)
     img_bg = cv2.bitwise_and(image, image, mask=mask_inv)
     img_fg = cv2.bitwise_and(dst_mask, dst_mask, mask=mask)
     out_img = cv2.add(img_bg, img_fg[:, :, 0:3])
-    if 'empty' in type or 'inpaint' in type:
+    if "empty" in type or "inpaint" in type:
         out_img = img_bg
     # Plot key points
 
-    if 'inpaint' in type:
+    if "inpaint" in type:
         out_img = cv2.inpaint(out_img, mask, 3, cv2.INPAINT_TELEA)
         # dst_NS = cv2.inpaint(img, mask, 3, cv2.INPAINT_NS)
 
@@ -421,7 +430,9 @@ def check_path(path):
     return is_directory, is_file, is_other
 
 
-def mask_image(image_path, mask_type, verbose):
+def mask_image(image_path, args):
+    mask_type = args.mask_type
+    verbose = args.verbose
     # Get face landmarks
     image = face_recognition.load_image_file(image_path)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -455,7 +466,7 @@ def mask_image(image_path, mask_type, verbose):
             if len(masked_images) > 0:
                 image = masked_images.pop(0)
             image, mask_binary = mask_face(
-                image, face_location, six_points_on_face, angle, type=mask_type
+                image, face_location, six_points_on_face, angle, args, type=mask_type
             )
 
             # compress to face tight
@@ -474,7 +485,6 @@ def mask_image(image_path, mask_type, verbose):
             #         face_location[3] - int(face_width / 2): face_location[1] + int(face_width / 2),
             #         ]
 
-
             masked_images.append(image)
             mask_binary_array.append(mask_binary)
             mask.append(mask_type)
@@ -488,6 +498,7 @@ def mask_image(image_path, mask_type, verbose):
                     face_location,
                     six_points_on_face,
                     angle,
+                    args,
                     type=available_mask_types[m],
                 )
                 masked_images.insert(m, img)

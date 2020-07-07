@@ -19,7 +19,7 @@ parser.add_argument(
 parser.add_argument(
     "--mask_type",
     type=str,
-    default="gas",
+    default="N95",
     help="Type of the mask to be applied. Available options: all, surgical_blue, surgical_green, N95, cloth",
 )
 
@@ -50,13 +50,6 @@ parser.add_argument(
     default=0.5,
     help="Weight of the color intensity. Must be between 0 and 1",
 )
-
-# parser.add_argument(
-#     "--verbose",
-#     type=bool,
-#     default=False,
-#     help="Turn verbosity on/off. True or False",
-# )
 parser.add_argument(
     "--verbose", dest="verbose", action="store_true", help="Turn verbosity on"
 )
@@ -64,6 +57,7 @@ parser.set_defaults(feature=False)
 
 args = parser.parse_args()
 args.write_path = args.path + "_masked"
+
 # Check in path is file or directory or none
 is_directory, is_file, is_other = check_path(args.path)
 display_MaskTheFace()
@@ -89,7 +83,9 @@ if is_directory:
                 tqdm.write(str_p)
 
             split_path = f.rsplit(".")
-            masked_image, mask, mask_binary_array, original_image = mask_image(image_path, args.mask_type, args.verbose)
+            masked_image, mask, mask_binary_array, original_image = mask_image(
+                image_path, args
+            )
             for i in range(len(mask)):
                 w_path = (
                     write_path
@@ -123,7 +119,9 @@ if is_directory:
             if is_image(image_path):
                 # Proceed if file is image
                 split_path = f.rsplit(".")
-                masked_image, mask, mask_binary, original_image = mask_image(image_path, args.mask_type, args.verbose)
+                masked_image, mask, mask_binary, original_image = mask_image(
+                    image_path, args
+                )
                 for i in range(len(mask)):
                     w_path = (
                         write_path
@@ -147,7 +145,7 @@ elif is_file:
         # Proceed if file is image
         # masked_images, mask, mask_binary_array, original_image
         masked_image, mask, mask_binary_array, original_image = mask_image(
-            image_path, args.mask_type, args.verbose
+            image_path, args
         )
         for i in range(len(mask)):
             w_path = write_path + "_" + mask[i] + "." + args.path.rsplit(".")[1]
