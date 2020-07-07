@@ -259,6 +259,15 @@ def mask_face(image, face_location, six_points, angle, type="surgical"):
     elif angle > threshold:
         type += "_left"
 
+    face_height = face_location[2] - face_location[0]
+    face_width = face_location[1] - face_location[3]
+    # image = image_raw[
+    #              face_location[0]-int(face_width/2): face_location[2]+int(face_width/2),
+    #              face_location[3]-int(face_height/2): face_location[1]+int(face_height/2),
+    #              :,
+    #              ]
+    # cv2.imshow('win', image)
+    # cv2.waitKey(0)
     # Read appropriate mask image
     w = image.shape[0]
     h = image.shape[1]
@@ -325,7 +334,7 @@ def mask_face(image, face_location, six_points, angle, type="surgical"):
                 out_img, (i[0][0], i[0][1]), radius=4, color=(0, 255, 0), thickness=-1
             )
 
-    return out_img
+    return out_img, mask
 
 
 def draw_landmarks(face_landmarks, image):
@@ -416,6 +425,7 @@ def mask_image(image_path, mask_type, verbose):
     # Get face landmarks
     image = face_recognition.load_image_file(image_path)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    original_image = image.copy()
     face_landmarks_list = face_recognition.face_landmarks(image)
     face_locations = face_recognition.face_locations(image)
     # draw_landmarks(face_landmarks_list[0], image)
@@ -428,6 +438,7 @@ def mask_image(image_path, mask_type, verbose):
         tqdm.write("Faces found: {:2d}".format(len(face_locations)))
     # Process each face in the image
     masked_images = []
+    mask_binary_array = []
     mask = []
     for i, (face_landmarks, face_location) in enumerate(
         zip(face_landmarks_list, face_locations)
@@ -436,7 +447,6 @@ def mask_image(image_path, mask_type, verbose):
         # if verbose:
         #     print('Processing Face: ', i)
         six_points_on_face, angle = get_six_points(face_landmarks, image)
-        print('Ang: ', angle)
         plot_lines(six_points_on_face, image, debug=False)
         # Put mask on face
 
@@ -444,17 +454,36 @@ def mask_image(image_path, mask_type, verbose):
         if mask_type != "all":
             if len(masked_images) > 0:
                 image = masked_images.pop(0)
-            image = mask_face(
+            image, mask_binary = mask_face(
                 image, face_location, six_points_on_face, angle, type=mask_type
             )
+
+            # compress to face tight
+            face_height = face_location[2] - face_location[0]
+            face_width = face_location[1] - face_location[3]
+
+            # if fa
+
+            # image = image[
+            #         face_location[0]-int(face_height/2): face_location[2],
+            #                  face_location[3]-int(face_width/2): face_location[1]+int(face_width/2),
+            #                  :,
+            #                  ]
+            # mask_binary = mask_binary[
+            #         face_location[0] - int(face_height / 2): face_location[2] + int(face_height / 2),
+            #         face_location[3] - int(face_width / 2): face_location[1] + int(face_width / 2),
+            #         ]
+
+
             masked_images.append(image)
+            mask_binary_array.append(mask_binary)
             mask.append(mask_type)
         else:
             available_mask_types = get_available_mask_types()
             for m in range(len(available_mask_types)):
                 if len(masked_images) == len(available_mask_types):
                     image = masked_images.pop(m)
-                img = mask_face(
+                img, mask_binary = mask_face(
                     image,
                     face_location,
                     six_points_on_face,
@@ -462,9 +491,10 @@ def mask_image(image_path, mask_type, verbose):
                     type=available_mask_types[m],
                 )
                 masked_images.insert(m, img)
+                mask_binary_array.insert(m, mask_binary)
             mask = available_mask_types
             cc = 1
-    return masked_images, mask
+    return masked_images, mask, mask_binary_array, original_image
 
 
 def is_image(path):

@@ -109,6 +109,7 @@ elif is_file:
     write_path = args.path.rsplit(".")[0]
     if is_image(image_path):
         # Proceed if file is image
+        
         image, mask = mask_image(image_path, args.mask_type, args.verbose)
         for i in range(len(mask)):
             w_path = write_path + "_" + mask[i] + "." + args.path.rsplit(".")[1]
