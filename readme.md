@@ -49,6 +49,8 @@ Currently MaskTheFace supports the following 4 mask types
 3. KN95
 4. Cloth
 
+![mask_types](images/mask_types.png)
+
 New masks are being added. Users, can also add custom masks following the guidelines provided.
 
 ### Mask Variations:
