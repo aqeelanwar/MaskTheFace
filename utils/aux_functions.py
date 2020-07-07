@@ -436,6 +436,7 @@ def mask_image(image_path, mask_type, verbose):
         # if verbose:
         #     print('Processing Face: ', i)
         six_points_on_face, angle = get_six_points(face_landmarks, image)
+        print('Ang: ', angle)
         plot_lines(six_points_on_face, image, debug=False)
         # Put mask on face
 
