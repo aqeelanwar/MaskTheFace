@@ -250,7 +250,7 @@ def get_angle(line1, line2):
 
 
 def mask_face(image, face_location, six_points, angle, type="surgical"):
-    debug = False
+    debug = True
 
     # Find the face angle
     threshold = 13

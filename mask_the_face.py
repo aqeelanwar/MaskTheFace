@@ -13,15 +13,44 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "--path",
     type=str,
-    default="F:\lfw_182\Darren_Campel/Darren_Campel_0001.png",
+    default="data/images16.jpg",
     help="Path to the folder containing images within folders as classes",
 )
 parser.add_argument(
     "--mask_type",
     type=str,
-    default="inpaint",
+    default="gas",
     help="Type of the mask to be applied. Available options: all, surgical_blue, surgical_green, N95, cloth",
 )
+
+parser.add_argument(
+    "--pattern",
+    type=str,
+    default="",
+    help="Type of the pattern. Available options in masks/textures",
+)
+
+parser.add_argument(
+    "--pattern_weight",
+    type=float,
+    default=0.5,
+    help="Weight of the pattern. Must be between 0 and 1",
+)
+
+parser.add_argument(
+    "--color",
+    type=str,
+    default="",
+    help="Hex color value that need to be overlayed to the mask",
+)
+
+parser.add_argument(
+    "--color_weight",
+    type=float,
+    default=0.5,
+    help="Weight of the color intensity. Must be between 0 and 1",
+)
+
 # parser.add_argument(
 #     "--verbose",
 #     type=bool,
@@ -109,11 +138,11 @@ elif is_file:
     write_path = args.path.rsplit(".")[0]
     if is_image(image_path):
         # Proceed if file is image
-        
-        image, mask = mask_image(image_path, args.mask_type, args.verbose)
+        #masked_images, mask, mask_binary_array, original_image
+        masked_image, mask, mask_binary_array, original_image = mask_image(image_path, args.mask_type, args.verbose)
         for i in range(len(mask)):
             w_path = write_path + "_" + mask[i] + "." + args.path.rsplit(".")[1]
-            img = image[i]
+            img = masked_image[i]
             cv2.imwrite(w_path, img)
 else:
     print('Path is neither a valid file or a valid directory')
