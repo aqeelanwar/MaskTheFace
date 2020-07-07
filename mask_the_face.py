@@ -57,7 +57,9 @@ parser.add_argument(
 #     default=False,
 #     help="Turn verbosity on/off. True or False",
 # )
-parser.add_argument('--verbose', dest='verbose', action='store_true', help="Turn verbosity on")
+parser.add_argument(
+    "--verbose", dest="verbose", action="store_true", help="Turn verbosity on"
+)
 parser.set_defaults(feature=False)
 
 args = parser.parse_args()
@@ -65,14 +67,14 @@ args.write_path = args.path + "_masked"
 # Check in path is file or directory or none
 is_directory, is_file, is_other = check_path(args.path)
 display_MaskTheFace()
+
 if is_directory:
     path, dirs, files = os.walk(args.path).__next__()
     file_count = len(files)
     dirs_count = len(dirs)
-
-    # Deal files first
-    # tqdm.write("Masking image files")
     print_orderly("Masking image files", 57)
+
+    # Process files in teh directory if any
     for f in tqdm(files):
         image_path = path + "/" + f
 
@@ -83,11 +85,11 @@ if is_directory:
         if is_image(image_path):
             # Proceed if file is image
             if args.verbose:
-                str_p = 'Processing: ' + image_path
+                str_p = "Processing: " + image_path
                 tqdm.write(str_p)
 
             split_path = f.rsplit(".")
-            image, mask = mask_image(image_path, args.mask_type, args.verbose)
+            masked_image, mask, mask_binary_array, original_image = mask_image(image_path, args.mask_type, args.verbose)
             for i in range(len(mask)):
                 w_path = (
                     write_path
@@ -98,26 +100,30 @@ if is_directory:
                     + "."
                     + split_path[1]
                 )
-                img = image[i]
+                img = masked_image[i]
                 cv2.imwrite(w_path, img)
 
     print_orderly("Masking image directories", 57)
+
+    # Process directories withing the path provided
     for d in tqdm(dirs):
         dir_path = args.path + "/" + d
         dir_write_path = args.write_path + "/" + d
         if not os.path.isdir(dir_write_path):
             os.makedirs(dir_write_path)
         _, _, files = os.walk(dir_path).__next__()
+
+        # Process each files within subdirectory
         for f in files:
             image_path = dir_path + "/" + f
             if args.verbose:
-                str_p = 'Processing: ' + image_path
+                str_p = "Processing: " + image_path
                 tqdm.write(str_p)
             write_path = dir_write_path
             if is_image(image_path):
                 # Proceed if file is image
                 split_path = f.rsplit(".")
-                image, mask = mask_image(image_path, args.mask_type, args.verbose)
+                masked_image, mask, mask_binary, original_image = mask_image(image_path, args.mask_type, args.verbose)
                 for i in range(len(mask)):
                     w_path = (
                         write_path
@@ -129,21 +135,24 @@ if is_directory:
                         + split_path[1]
                     )
 
-
-                    img = image[i]
+                    img = masked_image[i]
                     cv2.imwrite(w_path, img)
+
+# Process if the path was a file
 elif is_file:
     print("Masking image file")
     image_path = args.path
     write_path = args.path.rsplit(".")[0]
     if is_image(image_path):
         # Proceed if file is image
-        #masked_images, mask, mask_binary_array, original_image
-        masked_image, mask, mask_binary_array, original_image = mask_image(image_path, args.mask_type, args.verbose)
+        # masked_images, mask, mask_binary_array, original_image
+        masked_image, mask, mask_binary_array, original_image = mask_image(
+            image_path, args.mask_type, args.verbose
+        )
         for i in range(len(mask)):
             w_path = write_path + "_" + mask[i] + "." + args.path.rsplit(".")[1]
             img = masked_image[i]
             cv2.imwrite(w_path, img)
 else:
-    print('Path is neither a valid file or a valid directory')
-print('Processing Done')
+    print("Path is neither a valid file or a valid directory")
+print("Processing Done")
