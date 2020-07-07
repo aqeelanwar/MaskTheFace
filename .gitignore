@@ -18,6 +18,6 @@ scratch.py
 subset
 subset_masked
 vgg_face_dataset
-*,mp4
+*.mp4
 ML_examples
 *.pptx
