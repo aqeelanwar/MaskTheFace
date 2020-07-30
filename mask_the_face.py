@@ -13,13 +13,14 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "--path",
     type=str,
-    default="data/images16.jpg",
-    help="Path to the folder containing images within folders as classes",
+    default="F:\VGGface2/vggface2_train\original_160_subset",
+    help="Path to either the folder containing images or the image itself",
 )
 parser.add_argument(
     "--mask_type",
     type=str,
     default="N95",
+    choices=['surgical', 'N95', 'KN95', 'cloth', 'gas', 'inpaint', 'random', 'all'],
     help="Type of the mask to be applied. Available options: all, surgical_blue, surgical_green, N95, cloth",
 )
 
@@ -50,6 +51,15 @@ parser.add_argument(
     default=0.5,
     help="Weight of the color intensity. Must be between 0 and 1",
 )
+
+parser.add_argument(
+    "--code",
+    type = str,
+    default="cloth-masks/textures/check/check_4.jpg, cloth-#e54294, cloth-#ff0000, cloth, cloth-masks/textures/others/heart_1.png, cloth-masks/textures/fruits/pineapple.png, N95, surgical_blue, surgical_green",
+    help="Generate specific formats",
+)
+
+
 parser.add_argument(
     "--verbose", dest="verbose", action="store_true", help="Turn verbosity on"
 )
@@ -58,7 +68,31 @@ parser.set_defaults(feature=False)
 args = parser.parse_args()
 args.write_path = args.path + "_masked"
 
-# Check in path is file or directory or none
+
+# Extract data from code
+mask_code = "".join(args.code.split()).split(',')
+args.code_count = np.zeros(len(mask_code))
+args.mask_dict_of_dict = {}
+
+for i, entry in enumerate(mask_code):
+    mask_dict = {}
+    mask_color = ''
+    mask_texture = ''
+    mask_type = entry.split('-')[0]
+    if len(entry.split('-'))==2:
+        mask_variation = entry.split('-')[1]
+        if '#' in mask_variation:
+            mask_color = mask_variation
+        else:
+            mask_texture = mask_variation
+    mask_dict['type'] = mask_type
+    mask_dict['color'] = mask_color
+    mask_dict['texture'] = mask_texture
+
+    args.mask_dict_of_dict[i] = mask_dict
+
+
+# Check if path is file or directory or none
 is_directory, is_file, is_other = check_path(args.path)
 display_MaskTheFace()
 
@@ -132,9 +166,14 @@ if is_directory:
                         + "."
                         + split_path[1]
                     )
-
+                    w_path_original = write_path + "/" + f
                     img = masked_image[i]
+                    # Write the masked image
                     cv2.imwrite(w_path, img)
+
+                    # Write the original image
+                    cv2.imwrite(w_path_original, original_image)
+            print(args.code_count)
 
 # Process if the path was a file
 elif is_file:

@@ -441,7 +441,16 @@ def mask_image(image_path, args):
     face_locations = face_recognition.face_locations(image)
     # draw_landmarks(face_landmarks_list[0], image)
 
-    if mask_type == "random":
+    # Check if specific code was provided for masking, overwrite arguments
+    if args.code:
+        ind = random.randint(0, len(args.code_count)-1)
+        mask_dict = args.mask_dict_of_dict[ind]
+        mask_type = mask_dict['type']
+        args.color = mask_dict['color']
+        args.pattern = mask_dict['texture']
+        args.code_count[ind]+=1
+
+    elif mask_type == "random":
         available_mask_types = get_available_mask_types()
         mask_type = random.choice(available_mask_types)
 
