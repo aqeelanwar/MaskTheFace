@@ -10,8 +10,8 @@ import random
 #TODO:
 # 1. surgical_green, surgical_blue --> one surgical
 # 2. left mask and right mask --> one angled mask
-# 3. MFR2 Dataset script
-# 4. Organize MFR2 dataset
+# 3. Done: MFR2 Dataset script
+# 4. Done: Organize and Upload MFR2 dataset
 # 5. Done: Dlib based detector
 
 # Command-line input setup
