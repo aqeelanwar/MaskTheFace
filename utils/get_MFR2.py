@@ -62,8 +62,8 @@ def Convert(lst):
 
 if __name__ == "__main__":
     # Fetch the latest download_links.txt file from GitHub
-    link = 'https://raw.githubusercontent.com/aqeelanwar/PEDRA/master/requirements_cpu.txt'
-    links_dict =  Convert(download(link)[0].replace('==', '\n').split('\n'))
+    link = 'https://raw.githubusercontent.com/aqeelanwar/PEDRA/master/datasets/download_links.txt'
+    links_dict =  Convert(download(link)[0].replace(':', '\n').split('\n'))
     file_id = links_dict[args.dataset]
     file_id = '0B_QQR0eth4z2XzhyNVlDNmptbWM'
     destination = '_.zip'
