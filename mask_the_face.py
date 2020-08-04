@@ -3,8 +3,16 @@
 # Email: aqeel.anwar@gatech.edu
 
 import argparse
+import dlib
 from utils.aux_functions import *
 import random
+
+#TODO:
+# 1. surgical_green, surgical_blue --> one surgical
+# 2. left mask and right mask --> one angled mask
+# 3. MFR2 Dataset script
+# 4. Organize MFR2 dataset
+# 5. Done: Dlib based detector
 
 # Command-line input setup
 parser = argparse.ArgumentParser(
@@ -13,7 +21,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "--path",
     type=str,
-    default="F:\VGGface2/vggface2_train\original_160_subset",
+    default="F:\VGGface2/vggface2_train\original_160_subset - Copy",
     help="Path to either the folder containing images or the image itself",
 )
 parser.add_argument(
@@ -63,16 +71,26 @@ parser.add_argument(
 parser.add_argument(
     "--verbose", dest="verbose", action="store_true", help="Turn verbosity on"
 )
+parser.add_argument(
+    "--write_original_image",
+    dest="write_original_image",
+    action="store_true",
+    help="If true, original image is also stored in the masked folder"
+)
 parser.set_defaults(feature=False)
 
 args = parser.parse_args()
 args.write_path = args.path + "_masked"
 
+# Set up dlib face detector and predictor
+args.detector = dlib.get_frontal_face_detector()
+args.predictor = dlib.shape_predictor("dlib_models/shape_predictor_68_face_landmarks.dat")
 
 # Extract data from code
 mask_code = "".join(args.code.split()).split(',')
 args.code_count = np.zeros(len(mask_code))
 args.mask_dict_of_dict = {}
+
 
 for i, entry in enumerate(mask_code):
     mask_dict = {}
@@ -88,9 +106,7 @@ for i, entry in enumerate(mask_code):
     mask_dict['type'] = mask_type
     mask_dict['color'] = mask_color
     mask_dict['texture'] = mask_texture
-
     args.mask_dict_of_dict[i] = mask_dict
-
 
 # Check if path is file or directory or none
 is_directory, is_file, is_other = check_path(args.path)
@@ -102,7 +118,7 @@ if is_directory:
     dirs_count = len(dirs)
     print_orderly("Masking image files", 57)
 
-    # Process files in teh directory if any
+    # Process files in the directory if any
     for f in tqdm(files):
         image_path = path + "/" + f
 
@@ -170,10 +186,12 @@ if is_directory:
                     img = masked_image[i]
                     # Write the masked image
                     cv2.imwrite(w_path, img)
+                    if args.write_original_image:
+                        # Write the original image
+                        cv2.imwrite(w_path_original, original_image)
 
-                    # Write the original image
-                    cv2.imwrite(w_path_original, original_image)
-            print(args.code_count)
+            if args.verbose:
+                print(args.code_count)
 
 # Process if the path was a file
 elif is_file:
