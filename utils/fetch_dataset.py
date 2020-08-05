@@ -7,7 +7,7 @@ import requests,os
 from zipfile import ZipFile
 import argparse
 import urllib
-
+from utils.aux_functions import print_orderly
 parser = argparse.ArgumentParser(
     description="Download dataset - Python code to download associated datasets"
 )
@@ -62,16 +62,19 @@ def Convert(lst):
 
 if __name__ == "__main__":
     # Fetch the latest download_links.txt file from GitHub
+    print_orderly('Download dataset', 60)
     link = 'https://raw.githubusercontent.com/aqeelanwar/MaskTheFace/master/datasets/download_links.txt'
     links_dict =  Convert(download(link)[0].replace(':', '\n').replace("b'", "").replace("\'", "").replace(" ", "").split('\n'))
     file_id = links_dict[args.dataset]
     destination = os.getcwd().rsplit(os.path.sep,1)
     destination = destination[0] + os.path.sep + 'datasets' + os.path.sep + '_.zip'
+    print('Downloading: ', args.dataset)
     download_file_from_google_drive(file_id, destination)
-
+    print('Extracting: ', args.dataset)
     with ZipFile(destination, 'r') as zipObj:
         # Extract all the contents of zip file in current directory
         zipObj.extractall(destination.rsplit(os.path.sep, 1)[0])
 
     os.remove(destination)
+    print_orderly('Done', 60)
 
