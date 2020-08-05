@@ -146,6 +146,9 @@ The detector above was trained on 2000 images (1000 mask, 1000 without mask) fro
 
 ![cover_photo](images/mask_no_mask.png)
 
+## 3. Classify masks
+
+
 ## Citation
 If you find this repository useful, please use following citation
 ```
