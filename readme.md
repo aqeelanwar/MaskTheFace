@@ -47,6 +47,17 @@ python mask_the_face.py --path 'data/office.jpg' --mask_type 'N95' --verbose
 |     verbose    |                                                                          If set to True, will be used to display useful messages during masking                                                                         |
 |write_original_image|                   If used, the original unmasked image will also be saved in the masked image folder along with processed masked image                                                                              |
 
+### Explanation:
+#### --code
+the --code argument can be used to apply different type of masks uniformly at random to the images in the dataset.
+```
+# Generic format
+--code < masktype1 >-< color as hex or texture file path >, < masktype2 >-< color as hex or texture file path>, ...
+
+# Example
+--code cloth-masks/textures/check/check_4.jpg, cloth-#e54294, cloth-#ff0000, cloth, cloth-masks/textures/others/heart_1.png, cloth-masks/textures/fruits/pineapple.png, N95
+```
+The example above will apply 7 different masks, uniform at random, to be applied to the selected face dataset (via --path argument).
 ## Frequently Asked Questions (FAQ)
 Click [here](faq.md) to troubleshoot errors faced while installing and running MaskTheFace
 
