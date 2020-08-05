@@ -49,7 +49,7 @@ python mask_the_face.py --path 'data/office.jpg' --mask_type 'N95' --verbose
 
 
 ## Frequently Asked Questions (FAQ)
-Click (here)[faq.md] to troubleshoot errors faced while installing and running MaskTheFace
+Click [here](faq.md) to troubleshoot errors faced while installing and running MaskTheFace
 
 ## Supported Masks:
 ### Mask Types:
