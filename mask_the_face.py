@@ -6,7 +6,7 @@ import argparse
 import dlib
 from utils.aux_functions import *
 
-#TODO:
+# TODO:
 # 1. Done: surgical_green, surgical_blue --> one surgical
 # 2. left mask and right mask --> one angled mask
 # 3. Done: MFR2 Dataset script
@@ -28,7 +28,7 @@ parser.add_argument(
     "--mask_type",
     type=str,
     default="surgical",
-    choices=['surgical', 'N95', 'KN95', 'cloth', 'gas', 'inpaint', 'random', 'all'],
+    choices=["surgical", "N95", "KN95", "cloth", "gas", "inpaint", "random", "all"],
     help="Type of the mask to be applied. Available options: all, surgical_blue, surgical_green, N95, cloth",
 )
 
@@ -62,7 +62,7 @@ parser.add_argument(
 
 parser.add_argument(
     "--code",
-    type = str,
+    type=str,
     # default="cloth-masks/textures/check/check_4.jpg, cloth-#e54294, cloth-#ff0000, cloth, cloth-masks/textures/others/heart_1.png, cloth-masks/textures/fruits/pineapple.png, N95, surgical_blue, surgical_green",
     default="",
     help="Generate specific formats",
@@ -76,7 +76,7 @@ parser.add_argument(
     "--write_original_image",
     dest="write_original_image",
     action="store_true",
-    help="If true, original image is also stored in the masked folder"
+    help="If true, original image is also stored in the masked folder",
 )
 parser.set_defaults(feature=False)
 
@@ -85,32 +85,32 @@ args.write_path = args.path + "_masked"
 
 # Set up dlib face detector and predictor
 args.detector = dlib.get_frontal_face_detector()
-path_to_dlib_model = 'dlib_models/shape_predictor_68_face_landmarks.dat'
+path_to_dlib_model = "dlib_models/shape_predictor_68_face_landmarks.dat"
 if not os.path.exists(path_to_dlib_model):
     download_dlib_model()
 
 args.predictor = dlib.shape_predictor(path_to_dlib_model)
 
 # Extract data from code
-mask_code = "".join(args.code.split()).split(',')
+mask_code = "".join(args.code.split()).split(",")
 args.code_count = np.zeros(len(mask_code))
 args.mask_dict_of_dict = {}
 
 
 for i, entry in enumerate(mask_code):
     mask_dict = {}
-    mask_color = ''
-    mask_texture = ''
-    mask_type = entry.split('-')[0]
-    if len(entry.split('-'))==2:
-        mask_variation = entry.split('-')[1]
-        if '#' in mask_variation:
+    mask_color = ""
+    mask_texture = ""
+    mask_type = entry.split("-")[0]
+    if len(entry.split("-")) == 2:
+        mask_variation = entry.split("-")[1]
+        if "#" in mask_variation:
             mask_color = mask_variation
         else:
             mask_texture = mask_variation
-    mask_dict['type'] = mask_type
-    mask_dict['color'] = mask_color
-    mask_dict['texture'] = mask_texture
+    mask_dict["type"] = mask_type
+    mask_dict["color"] = mask_color
+    mask_dict["texture"] = mask_texture
     args.mask_dict_of_dict[i] = mask_dict
 
 # Check if path is file or directory or none
@@ -121,7 +121,7 @@ if is_directory:
     path, dirs, files = os.walk(args.path).__next__()
     file_count = len(files)
     dirs_count = len(dirs)
-    if len(files)>0:
+    if len(files) > 0:
         print_orderly("Masking image files", 60)
 
     # Process files in the directory if any

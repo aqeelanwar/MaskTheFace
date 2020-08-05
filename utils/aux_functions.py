@@ -16,26 +16,32 @@ from zipfile import ZipFile
 from tqdm import tqdm
 import bz2, shutil
 
+
 def download_dlib_model():
-    print_orderly('Get dlib model', 60)
+    print_orderly("Get dlib model", 60)
     dlib_model_link = "http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2"
-    print('Downloading dlib model...')
+    print("Downloading dlib model...")
     r = requests.get(dlib_model_link, stream=True)
-    print("Zip file size: ", np.round(len(r.content)/1024/1024, 2), "MB")
-    destination = 'dlib_models'+os.path.sep+'shape_predictor_68_face_landmarks.dat.bz2'
+    print("Zip file size: ", np.round(len(r.content) / 1024 / 1024, 2), "MB")
+    destination = (
+        "dlib_models" + os.path.sep + "shape_predictor_68_face_landmarks.dat.bz2"
+    )
     if not os.path.exists(destination.rsplit(os.path.sep, 1)[0]):
         os.mkdir(destination.rsplit(os.path.sep, 1)[0])
-    print('Saving dlib model...')
-    with open(destination, 'wb') as fd:
+    print("Saving dlib model...")
+    with open(destination, "wb") as fd:
         for chunk in r.iter_content(chunk_size=32678):
             fd.write(chunk)
-    print('Extracting dlib model...')
-    with bz2.BZ2File(destination) as fr, open("dlib_models/shape_predictor_68_face_landmarks.dat", "wb") as fw:
+    print("Extracting dlib model...")
+    with bz2.BZ2File(destination) as fr, open(
+        "dlib_models/shape_predictor_68_face_landmarks.dat", "wb"
+    ) as fw:
         shutil.copyfileobj(fr, fw)
-    print('Saved: ', destination)
-    print_orderly('done', 60)
+    print("Saved: ", destination)
+    print_orderly("done", 60)
 
     os.remove(destination)
+
 
 def get_line(face_landmark, image, type="eye", debug=False):
     pil_image = Image.fromarray(image)
@@ -456,6 +462,7 @@ def check_path(path):
 
     return is_directory, is_file, is_other
 
+
 def shape_to_landmarks(shape):
     face_landmarks = {}
     face_landmarks["left_eyebrow"] = [
@@ -552,12 +559,14 @@ def shape_to_landmarks(shape):
     ]
     return face_landmarks
 
+
 def rect_to_bb(rect):
     x1 = rect.left()
     x2 = rect.right()
     y1 = rect.top()
     y2 = rect.bottom()
     return (x1, x2, y2, x1)
+
 
 def mask_image(image_path, args):
     # Read the image
@@ -571,9 +580,9 @@ def mask_image(image_path, args):
     if args.code:
         ind = random.randint(0, len(args.code_count) - 1)
         mask_dict = args.mask_dict_of_dict[ind]
-        mask_type = mask_dict['type']
-        args.color = mask_dict['color']
-        args.pattern = mask_dict['texture']
+        mask_type = mask_dict["type"]
+        args.color = mask_dict["color"]
+        args.pattern = mask_dict["texture"]
         args.code_count[ind] += 1
 
     elif mask_type == "random":
@@ -626,6 +635,7 @@ def mask_image(image_path, args):
             cc = 1
 
     return masked_images, mask, mask_binary_array, original_image
+
 
 def is_image(path):
     split = path.rsplit("/")
