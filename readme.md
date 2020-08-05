@@ -48,8 +48,8 @@ python mask_the_face.py --path 'data/office.jpg' --mask_type 'N95' --verbose
 |write_original_image|                   If used, the original unmasked image will also be saved in the masked image folder along with processed masked image                                                                              |
 
 ### Explanation:
-#### --code
-the --code argument can be used to apply different type of masks uniformly at random to the images in the dataset.
+#### 1. _--code_
+The --code argument can be used to apply different type of masks uniformly at random to the images in the dataset.
 ```
 # Generic format
 --code < masktype1 >-< color as hex or texture file path >, < masktype2 >-< color as hex or texture file path>, ...
