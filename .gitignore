@@ -22,3 +22,4 @@ vgg_face_dataset
 ML_examples
 *.pptx
 datasets
+*.dat
