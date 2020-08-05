@@ -47,6 +47,10 @@ python mask_the_face.py --path 'data/office.jpg' --mask_type 'N95' --verbose
 |      code      |                                                              Can be used to create specific mask formats at random. More can be found in the section below.                                                             |
 |     verbose    |                                                                          If set to True, will be used to display useful messages during masking                                                                         |
 
+
+## Frequently Asked Questions (FAQ)
+Click (here)[faq.md] to troubleshoot errors faced while installing and running MaskTheFace
+
 ## Supported Masks:
 ### Mask Types:
 Currently MaskTheFace supports the following 4 mask types
