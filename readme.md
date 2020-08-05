@@ -90,12 +90,12 @@ MaskTheFace provided script to modify existing mask types in terms of intensity 
 
 
 # MFR2 - Masked Faces in Real-World for Face Recognition
-Masked faces in real world for face recognition (MFR2) is a small dataset with 53 identities of celebrities and politicians with a total of 269 images that are collected from the internet.  
-Each identity has on average of 5 images. The dataset contains both masked and unmasked faces of the identities.
+Masked faces in real world for face recognition (MFR2) is a small dataset with 53 identities of celebrities and politicians with a total of 269 images that are collected from the internet. Each identity has on average of 5 images. The dataset contains both masked and unmasked faces of the identities.
 The dataset is processed in terms of face alignment and image dimensions. Each image has a dimension of (160x160x3). Sample images from the MFR2 data-set and the mask distribution can be seen below.
+
 ![mfr2](images/mfr2.png)
 
-The dataset can downloaded using the following command
+The dataset can be downloaded using the following command
 
 ```
 cd MaskTheFace
@@ -108,7 +108,7 @@ This will download and extract the mfr2 dataset in the datasets folder.
 MaskTheFace/datasets/mfr2
 ```
 
-Alternatively you can download mfr2.zip file from (here)[https://drive.google.com/file/d/1ukk0n_srRqcsotK2MjlFPj7L0sXcR2fH/view?usp=sharing]
+Alternatively you can download mfr2.zip file from [here](https://drive.google.com/file/d/1ukk0n_srRqcsotK2MjlFPj7L0sXcR2fH/view?usp=sharing)
 
 The downloaded dataset folder contains
 1. Folders with images of identities
