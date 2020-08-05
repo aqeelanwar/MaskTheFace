@@ -11,6 +11,31 @@ from utils.fit_ellipse import *
 import random
 from utils.create_mask import texture_the_mask, color_the_mask
 from imutils import face_utils
+import requests
+from zipfile import ZipFile
+from tqdm import tqdm
+import bz2, shutil
+
+def download_dlib_model():
+    print_orderly('Get dlib model', 60)
+    dlib_model_link = "http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2"
+    print('Downloading dlib model...')
+    r = requests.get(dlib_model_link, stream=True)
+    print("Zip file size: ", np.round(len(r.content)/1024/1024, 2), "MB")
+    destination = 'dlib_models'+os.path.sep+'shape_predictor_68_face_landmarks.dat.bz2'
+    if not os.path.exists(destination.rsplit(os.path.sep, 1)[0]):
+        os.mkdir(destination.rsplit(os.path.sep, 1)[0])
+    print('Saving dlib model...')
+    with open(destination, 'wb') as fd:
+        for chunk in r.iter_content(chunk_size=32678):
+            fd.write(chunk)
+    print('Extracting dlib model...')
+    with bz2.BZ2File(destination) as fr, open("dlib_models/shape_predictor_68_face_landmarks.dat", "wb") as fw:
+        shutil.copyfileobj(fr, fw)
+    print('Saved: ', destination)
+    print_orderly('done', 60)
+
+    os.remove(destination)
 
 def get_line(face_landmark, image, type="eye", debug=False):
     pil_image = Image.fromarray(image)
@@ -630,7 +655,7 @@ def get_available_mask_types(config_filename="masks/masks.cfg"):
 
 
 def print_orderly(str, n):
-    print("")
+    # print("")
     hyphens = "-" * int((n - len(str)) / 2)
     str_p = hyphens + " " + str + " " + hyphens
     hyphens_bar = "-" * len(str_p)

@@ -5,14 +5,14 @@
 import argparse
 import dlib
 from utils.aux_functions import *
-import random
 
 #TODO:
-# 1. surgical_green, surgical_blue --> one surgical
+# 1. Done: surgical_green, surgical_blue --> one surgical
 # 2. left mask and right mask --> one angled mask
 # 3. Done: MFR2 Dataset script
 # 4. Done: Organize and Upload MFR2 dataset
 # 5. Done: Dlib based detector
+# 6. Done: Download dlib model
 
 # Command-line input setup
 parser = argparse.ArgumentParser(
@@ -27,7 +27,7 @@ parser.add_argument(
 parser.add_argument(
     "--mask_type",
     type=str,
-    default="N95",
+    default="surgical",
     choices=['surgical', 'N95', 'KN95', 'cloth', 'gas', 'inpaint', 'random', 'all'],
     help="Type of the mask to be applied. Available options: all, surgical_blue, surgical_green, N95, cloth",
 )
@@ -49,7 +49,7 @@ parser.add_argument(
 parser.add_argument(
     "--color",
     type=str,
-    default="",
+    default="#0473e2",
     help="Hex color value that need to be overlayed to the mask",
 )
 
@@ -63,7 +63,8 @@ parser.add_argument(
 parser.add_argument(
     "--code",
     type = str,
-    default="cloth-masks/textures/check/check_4.jpg, cloth-#e54294, cloth-#ff0000, cloth, cloth-masks/textures/others/heart_1.png, cloth-masks/textures/fruits/pineapple.png, N95, surgical_blue, surgical_green",
+    # default="cloth-masks/textures/check/check_4.jpg, cloth-#e54294, cloth-#ff0000, cloth, cloth-masks/textures/others/heart_1.png, cloth-masks/textures/fruits/pineapple.png, N95, surgical_blue, surgical_green",
+    default="",
     help="Generate specific formats",
 )
 
@@ -84,7 +85,11 @@ args.write_path = args.path + "_masked"
 
 # Set up dlib face detector and predictor
 args.detector = dlib.get_frontal_face_detector()
-args.predictor = dlib.shape_predictor("dlib_models/shape_predictor_68_face_landmarks.dat")
+path_to_dlib_model = 'dlib_models/shape_predictor_68_face_landmarks.dat'
+if not os.path.exists(path_to_dlib_model):
+    download_dlib_model()
+
+args.predictor = dlib.shape_predictor(path_to_dlib_model)
 
 # Extract data from code
 mask_code = "".join(args.code.split()).split(',')
@@ -116,7 +121,8 @@ if is_directory:
     path, dirs, files = os.walk(args.path).__next__()
     file_count = len(files)
     dirs_count = len(dirs)
-    print_orderly("Masking image files", 57)
+    if len(files)>0:
+        print_orderly("Masking image files", 60)
 
     # Process files in the directory if any
     for f in tqdm(files):
@@ -149,7 +155,7 @@ if is_directory:
                 img = masked_image[i]
                 cv2.imwrite(w_path, img)
 
-    print_orderly("Masking image directories", 57)
+    print_orderly("Masking image directories", 60)
 
     # Process directories withing the path provided
     for d in tqdm(dirs):
