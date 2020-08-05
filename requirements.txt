@@ -9,3 +9,5 @@ opencv-python==4.2.0.34
 Pillow==7.1.2
 tqdm==4.46.0
 wincertstore==0.2
+imutils==0.5.3
+requests==2.24.0
