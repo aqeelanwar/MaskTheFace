@@ -151,3 +151,7 @@ If you find this repository useful, please use following citation
 ```
 https://github.com/aqeelanwar/MaskTheFace
 ```
+
+
+## License
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details
