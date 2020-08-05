@@ -119,12 +119,14 @@ The downloaded dataset folder contains
 2. mfr2_labels.txt : Label text file with identity name, image number, and type of mask ground truth
 3. pairs.txt: Text file containing 848 positive and negative pairs to be used for testing
 
-## Example usage
+---
 
-### 1. Face recognition with masks
+# Example usage
+
+## 1. Face recognition with masks
 Face recognition trained to usual face images have proven to give good accuracy.In the recent ongoing outbreak of Covid19, people have been advised to use face masks. With majority of people using face masks, the face recognition system fails to perform. Due to limited mask images, there is not enough masked data available to train a new system. MaskTheFace can be used to create masked data set from unmasked dataset which is then used to either fine-tune an existing or train a new face recognition system.
 
-#### Example
+### Example
 A face recognition system consisting of 20 different classes was considered. A VGG16 network was trained on these 20 different classes of un-masked faces from VGGFace2 dataset for face recognition. The network achieved an accuracy of 68.3% on un-masked test dataset. When the same network was tested on the masked test images (obtained from MaskTheFace) gave an accuracy of only 36.6% (about half of that of before)
 
 MaskTheFace was used to convert the training dataset from previous problem to masked dataset. Both the unmasked and masked dataset was made a part of training set. The network trained on this dataset
@@ -136,10 +138,10 @@ Not only the accuracy of masked dataset was improved, but the system also perfor
 
 
 
-### 2. Monitoring if people are using masks
+## 2. Monitoring if people are using masks
 MaskTheFace generated datasets can be used to monitor if people are using face masks.
 
-#### Example
+### Example
 The detector above was trained on 2000 images (1000 mask, 1000 without mask) from the VGGface2 dataset. The masked images contained 4 different types of masks. A VGG16 network was trained on these images which achieved a 98.9% accuracy on test dataset.
 
 ![cover_photo](images/mask_no_mask.png)
