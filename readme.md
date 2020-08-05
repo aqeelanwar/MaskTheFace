@@ -1,14 +1,13 @@
 # MaskTheFace - Convert face dataset to masked dataset
 ![cover_photo](images/MaskTheFace.png)
 ## What is MaskTheFace?
-MaskTheFace is computer vision based scripts to mask faces in images.
-It provides a number of masks to select from. It is difficult to collect mask dataset under various conditions. MaskTheFace can be used to convert any existing face dataset to masked-face dataset.
+MaskTheFace is dlib based scripts to mask faces in images. It provides a number of masks to select from. It is difficult to collect mask dataset under various conditions. MaskTheFace can be used to convert any existing face dataset to masked-face dataset.
 MaskTheFace identifies all the faces within an image, and applies the user selected masks to them taking into account various limitations such as face angle, mask fit, lighting conditions etc.  
 A single image, or entire directory of images can be used as input to code.
 ![cover_photo](images/example1.png)
 
 ## How to install MaskTheFace
-It’s advisable to [make a new virtual environment](https://towardsdatascience.com/setting-up-python-platform-for-machine-learning-projects-cfd85682c54b) and install the dependencies. Following steps can be taken to download get started with MaskTheFace
+It’s advisable to [make a new virtual environment](https://towardsdatascience.com/setting-up-python-platform-for-machine-learning-projects-cfd85682c54b) with python 3.6 and install the dependencies. Following steps can be taken to download get started with MaskTheFace
 ### Clone the repository
 ```
 git clone https://github.com/aqeelanwar/MaskTheFace.git
@@ -46,7 +45,7 @@ python mask_the_face.py --path 'data/office.jpg' --mask_type 'N95' --verbose
 |  color_weight  |                                      Selects the intensity of the color to be applied on the mask. The value should be between 0 (no color strength) to 1 (maximum color strength)                                      |
 |      code      |                                                              Can be used to create specific mask formats at random. More can be found in the section below.                                                             |
 |     verbose    |                                                                          If set to True, will be used to display useful messages during masking                                                                         |
-
+|write_original_image|                   If used, the original unmasked image will also be saved in the masked image folder along with processed masked image                                                                              |
 
 ## Frequently Asked Questions (FAQ)
 Click [here](faq.md) to troubleshoot errors faced while installing and running MaskTheFace
@@ -88,6 +87,33 @@ MaskTheFace provided script to modify existing mask types in terms of intensity 
 ![cover_photo](images/brightness.png)
 ### Bulk masking on datasets
 ![cover_photo](images/dataset.png)
+
+
+# MFR2 - Masked Faces in Real-World for Face Recognition
+Masked faces in real world for face recognition (MFR2) is a small dataset with 53 identities of celebrities and politicians with a total of 269 images that are collected from the internet.  
+Each identity has on average of 5 images. The dataset contains both masked and unmasked faces of the identities.
+The dataset is processed in terms of face alignment and image dimensions. Each image has a dimension of (160x160x3). Sample images from the MFR2 data-set and the mask distribution can be seen below.
+![mfr2](images/mfr2.png)
+
+The dataset can downloaded using the following command
+
+```
+cd MaskTheFace
+python utils/fetch_dataset.py --dataset mfr2
+```
+This will download and extract the mfr2 dataset in the datasets folder.
+
+```
+# path to mfr2
+MaskTheFace/datasets/mfr2
+```
+
+Alternatively you can download mfr2.zip file from (here)[https://drive.google.com/file/d/1ukk0n_srRqcsotK2MjlFPj7L0sXcR2fH/view?usp=sharing]
+
+The downloaded dataset folder contains
+1. Folders with images of identities
+2. mfr2_labels.txt : Label text file with identity name, image number, and type of mask ground truth
+3. pairs.txt: Text file containing 848 positive and negative pairs to be used for testing
 
 ## Example usage
 
