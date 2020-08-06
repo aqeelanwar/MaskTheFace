@@ -1,9 +1,7 @@
 # MaskTheFace - Convert face dataset to masked dataset
 ![cover_photo](images/MaskTheFace.png)
 ## What is MaskTheFace?
-MaskTheFace is dlib based scripts to mask faces in images. It provides a number of masks to select from. It is difficult to collect mask dataset under various conditions. MaskTheFace can be used to convert any existing face dataset to masked-face dataset.
-MaskTheFace identifies all the faces within an image, and applies the user selected masks to them taking into account various limitations such as face angle, mask fit, lighting conditions etc.  
-A single image, or entire directory of images can be used as input to code.
+MaskTheFace is dlib based python script to mask faces in images. It provides a number of masks to select from with varying color and textures to select from. It is difficult to collect mask dataset under various conditions. MaskTheFace can be used to convert any existing face dataset to masked-face dataset. MaskTheFace identifies all the faces within an image, and applies the user selected masks to them taking into account various limitations such as face angle, mask fit, lighting conditions etc. A single image, or entire directory of images can be used as input to code.
 ![cover_photo](images/example1.png)
 
 ## How to install MaskTheFace
@@ -28,10 +26,10 @@ This will install the required packages in the activated python environment.
 ```
 cd MaskTheFace
 # Generic
-python mask_the_face.py --path <path-to-file-or-dir> --mask_type <type-of-mask> --verbose
+python mask_the_face.py --path <path-to-file-or-dir> --mask_type <type-of-mask> --verbose --write_original_image
 
 # Example
-python mask_the_face.py --path 'data/office.jpg' --mask_type 'N95' --verbose
+python mask_the_face.py --path 'data/office.jpg' --mask_type 'N95' --verbose --write_original_image
 ```
 ![cover_photo](images/run.png)
 ### Arguments
