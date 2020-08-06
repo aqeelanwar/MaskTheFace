@@ -57,7 +57,7 @@ The --code argument can be used to apply different type of masks uniformly at ra
 # Example
 --code cloth-masks/textures/check/check_4.jpg, cloth-#e54294, cloth-#ff0000, cloth, cloth-masks/textures/others/heart_1.png, cloth-masks/textures/fruits/pineapple.png, N95
 ```
-The example above will apply 7 different masks, uniform at random, to be applied to the selected face dataset (via --path argument).
+The example above will apply 7 different masks, uniform at random, to the selected face dataset (via --path argument).
 ## Frequently Asked Questions (FAQ)
 Click [here](faq.md) to troubleshoot errors faced while installing and running MaskTheFace
 
