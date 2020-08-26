@@ -1,10 +1,8 @@
 # MaskTheFace - Convert face dataset to masked dataset
 ![cover_photo](images/MaskTheFace.png)
 ## What is MaskTheFace?
-MaskTheFace is dlib based scripts to mask faces in images. It provides a number of masks to select from. It is difficult to collect mask dataset under various conditions. MaskTheFace can be used to convert any existing face dataset to masked-face dataset.
-MaskTheFace identifies all the faces within an image, and applies the user selected masks to them taking into account various limitations such as face angle, mask fit, lighting conditions etc.  
-A single image, or entire directory of images can be used as input to code.
-![cover_photo](images/example1.png)
+MaskTheFace is computer vision-based script to mask faces in images. It uses a dlib based face landmarks detector to identify the face tilt and six key features of the face necessary for applying mask. Based on the face tilt, corresponding mask template is selected from the library of mask. The template mask is then transformed based on the six key features to fit perfectly on the face. The complete block diagram can be seen below. MaskTheFace provides a number of masks to select from. It is difficult to collect mask dataset under various conditions. MaskTheFace can be used to convert any existing face dataset to masked-face dataset. MaskTheFace identifies all the faces within an image, and applies the user selected masks to them taking into account various limitations such as face angle, mask fit, lighting conditions etc. A single image, or entire directory of images can be used as input to code.
+![block_diagram](images/block_diag.png)
 
 ## How to install MaskTheFace
 It’s advisable to [make a new virtual environment](https://towardsdatascience.com/setting-up-python-platform-for-machine-learning-projects-cfd85682c54b) with python 3.6 and install the dependencies. Following steps can be taken to download get started with MaskTheFace
@@ -28,10 +26,10 @@ This will install the required packages in the activated python environment.
 ```
 cd MaskTheFace
 # Generic
-python mask_the_face.py --path <path-to-file-or-dir> --mask_type <type-of-mask> --verbose
+python mask_the_face.py --path <path-to-file-or-dir> --mask_type <type-of-mask> --verbose --write_original_image
 
 # Example
-python mask_the_face.py --path 'data/office.jpg' --mask_type 'N95' --verbose
+python mask_the_face.py --path 'data/office.jpg' --mask_type 'N95' --verbose --write_original_image
 ```
 ![cover_photo](images/run.png)
 ### Arguments
@@ -47,6 +45,17 @@ python mask_the_face.py --path 'data/office.jpg' --mask_type 'N95' --verbose
 |     verbose    |                                                                          If set to True, will be used to display useful messages during masking                                                                         |
 |write_original_image|                   If used, the original unmasked image will also be saved in the masked image folder along with processed masked image                                                                              |
 
+### Explanation:
+#### 1. _--code_
+The --code argument can be used to apply different type of masks uniformly at random to the images in the dataset.
+```
+# Generic format
+--code < masktype1 >-< color as hex or texture file path >, < masktype2 >-< color as hex or texture file path>, ...
+
+# Example
+--code cloth-masks/textures/check/check_4.jpg, cloth-#e54294, cloth-#ff0000, cloth, cloth-masks/textures/others/heart_1.png, cloth-masks/textures/fruits/pineapple.png, N95
+```
+The example above will apply 7 different masks, uniform at random, to the selected face dataset (via --path argument).
 ## Frequently Asked Questions (FAQ)
 Click [here](faq.md) to troubleshoot errors faced while installing and running MaskTheFace
 
@@ -146,6 +155,9 @@ The detector above was trained on 2000 images (1000 mask, 1000 without mask) fro
 
 ![cover_photo](images/mask_no_mask.png)
 
+## 3. Classify masks
+
+
 ## Citation
 If you find this repository useful, please use following citation
 ```
@@ -158,3 +170,7 @@ archivePrefix={arXiv},
 primaryClass={cs.CV}
 } 
 ```
+
+
+## License
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details

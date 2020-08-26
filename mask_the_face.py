@@ -13,6 +13,8 @@ from utils.aux_functions import *
 # 4. Done: Organize and Upload MFR2 dataset
 # 5. Done: Dlib based detector
 # 6. Done: Download dlib model
+# 7. Done: Readme update with --code etc
+# 8. Update website
 
 # Command-line input setup
 parser = argparse.ArgumentParser(
