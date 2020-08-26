@@ -6,15 +6,7 @@ import argparse
 import dlib
 from utils.aux_functions import *
 
-# TODO:
-# 1. Done: surgical_green, surgical_blue --> one surgical
-# 2. left mask and right mask --> one angled mask
-# 3. Done: MFR2 Dataset script
-# 4. Done: Organize and Upload MFR2 dataset
-# 5. Done: Dlib based detector
-# 6. Done: Download dlib model
-# 7. Done: Readme update with --code etc
-# 8. Update website
+
 
 # Command-line input setup
 parser = argparse.ArgumentParser(
@@ -23,7 +15,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "--path",
     type=str,
-    default="F:\VGGface2/vggface2_train\original_160_subset - Copy",
+    default="",
     help="Path to either the folder containing images or the image itself",
 )
 parser.add_argument(
