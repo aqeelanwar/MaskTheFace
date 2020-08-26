@@ -149,5 +149,12 @@ The detector above was trained on 2000 images (1000 mask, 1000 without mask) fro
 ## Citation
 If you find this repository useful, please use following citation
 ```
-https://github.com/aqeelanwar/MaskTheFace
+@misc{anwar2020masked,
+title={Masked Face Recognition for Secure Authentication},
+author={Aqeel Anwar and Arijit Raychowdhury},
+year={2020},
+eprint={2008.11104},
+archivePrefix={arXiv},
+primaryClass={cs.CV}
+} 
 ```
