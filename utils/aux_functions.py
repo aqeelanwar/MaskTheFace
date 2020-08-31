@@ -638,15 +638,17 @@ def mask_image(image_path, args):
 
 
 def is_image(path):
-    split = path.rsplit("/")
-    if split[1][0] == ".":
-        return False
-    image_extensions = ["png", "PNG", "jpg", "JPG"]
-    split = path.rsplit(".")
-    if split[1] in image_extensions:
-        return True
-    else:
-        return False
+    try:
+        extensions = path[-4:]
+        image_extensions = ["png", "PNG", "jpg", "JPG"]
+
+        if extensions[1:] in image_extensions:
+            return True 
+        else:
+            print("Please input image file. png / jpg")
+            return False 
+    except: 
+        return False 
 
 
 def get_available_mask_types(config_filename="masks/masks.cfg"):
