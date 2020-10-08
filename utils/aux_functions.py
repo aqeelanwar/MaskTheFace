@@ -576,7 +576,7 @@ def mask_image(image_path, args):
     # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = image
     if args.ann_path:
-        face_locations = get_ann_rectangles(image_path, args.ann_paths)
+        face_locations = get_ann_rectangles(image_path, args.ann_path)
     else:
         face_locations = args.detector(gray, 1)
     mask_type = args.mask_type
