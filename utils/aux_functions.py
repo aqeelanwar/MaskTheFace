@@ -14,6 +14,7 @@ from imutils import face_utils
 import requests
 from zipfile import ZipFile
 from tqdm import tqdm
+from .annotation_tool import get_ann_rectangles
 import bz2, shutil
 
 
@@ -574,7 +575,10 @@ def mask_image(image_path, args):
     original_image = image.copy()
     # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = image
-    face_locations = args.detector(gray, 1)
+    if args.ann_path:
+        face_locations = get_ann_rectangles(image_path, args.ann_paths)
+    else:
+        face_locations = args.detector(gray, 1)
     mask_type = args.mask_type
     verbose = args.verbose
     if args.code:
