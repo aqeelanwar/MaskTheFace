@@ -19,6 +19,12 @@ parser.add_argument(
     help="Path to either the folder containing images or the image itself",
 )
 parser.add_argument(
+    "--ann_path",
+    type=str,
+    default="",
+    help="Path to annotations if any"
+)
+parser.add_argument(
     "--mask_type",
     type=str,
     default="surgical",

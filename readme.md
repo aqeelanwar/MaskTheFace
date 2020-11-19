@@ -96,7 +96,9 @@ MaskTheFace provided script to modify existing mask types in terms of intensity 
 ![cover_photo](images/brightness.png)
 ### Bulk masking on datasets
 ![cover_photo](images/dataset.png)
-
+### Convert your annotations
+You can convert your annotations by passing the path where you have it stored, the annotations should match the name of the images. For now
+the only available annotation type is YOLO annotation. 
 
 ---
 
