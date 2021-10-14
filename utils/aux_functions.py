@@ -318,7 +318,17 @@ def mask_face(image, face_location, six_points, angle, args, type="surgical"):
     # Process the mask if necessary
     if args.pattern:
         # Apply pattern to mask
-        img = texture_the_mask(img, args.pattern, args.pattern_weight)
+        if os.path.isfile(args.pattern):
+            img = texture_the_mask(img, args.pattern, args.pattern_weight)
+        else:
+            patterns_list = []
+            for root, dirs, files in os.walk(args.pattern):
+                if len(files) != 0 and len(dirs) == 0:
+                    for item in files:
+                        pattern_path = os.path.join(root, item)
+                        patterns_list.append(pattern_path)
+            choice_pattern = random.choice(patterns_list)
+            img = texture_the_mask(img, choice_pattern, args.pattern_weight)
 
     if args.color:
         # Apply color to mask
