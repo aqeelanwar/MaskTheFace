@@ -356,12 +356,20 @@ def mask_face(image, face_location, six_points, angle, args, type="surgical"):
 
     # Apply mask
     mask_inv = cv2.bitwise_not(mask)
-    img_bg = cv2.bitwise_and(image, image, mask=mask_inv)
-    img_fg = cv2.bitwise_and(dst_mask, dst_mask, mask=mask)
-    out_img = cv2.add(img_bg, img_fg[:, :, 0:3])
-    if "empty" in type or "inpaint" in type:
-        out_img = img_bg
-    # Plot key points
+
+    img_bg = image.astype(np.float32)
+    _t = mask_inv.astype(np.float32) / 255
+    img_bg[:,:,0] *= _t
+    img_bg[:, :, 1] *= _t
+    img_bg[:, :, 2] *= _t
+
+    img_fg = dst_mask.astype(np.float32)
+    _t = mask.astype(np.float32) / 255
+    img_fg[:, :, 0] *= _t
+    img_fg[:, :, 1] *= _t
+    img_fg[:, :, 2] *= _t
+
+    out_img = cv2.add(img_bg.astype(np.uint8), img_fg[:, :, 0:3].astype(np.uint8))
 
     if "inpaint" in type:
         out_img = cv2.inpaint(out_img, mask, 3, cv2.INPAINT_TELEA)
