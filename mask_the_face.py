@@ -133,7 +133,7 @@ if is_directory:
                 tqdm.write(str_p)
 
             split_path = f.rsplit(".")
-            split_path = ["".join(split_path[:-1]),split_path[-1]]
+            split_path = [".".join(split_path[:-1]),split_path[-1]]
             masked_image, mask, mask_binary_array, original_image = mask_image(
                 image_path, args
             )
