@@ -123,8 +123,11 @@ if is_directory:
         image_path = path + "/" + f
 
         write_path = path + "_masked"
+        bin_path = path + "_bin"
         if not os.path.isdir(write_path):
             os.makedirs(write_path)
+        if not os.path.isdir(bin_path):
+            os.makedirs(bin_path)
 
         if is_image(image_path):
             # Proceed if file is image
@@ -146,8 +149,19 @@ if is_directory:
                     + "."
                     + split_path[1]
                 )
+                w_path2 = (
+                    bin_path
+                    + "/"
+                    + split_path[0]
+                    + "_"
+                    + mask[i]
+                    + "."
+                    + split_path[1]
+                )
                 img = masked_image[i]
                 cv2.imwrite(w_path, img)
+                img2 = mask_binary_array[i]
+                cv2.imwrite(w_path2, img2)
 
     print_orderly("Masking image directories", 60)
 
@@ -155,8 +169,11 @@ if is_directory:
     for d in tqdm(dirs):
         dir_path = args.path + "/" + d
         dir_write_path = args.write_path + "/" + d
+        bin_path = args.write_path + "_bin/" + d
         if not os.path.isdir(dir_write_path):
             os.makedirs(dir_write_path)
+        if not os.path.isdir(bin_path):
+            os.makedirs(bin_path)
         _, _, files = os.walk(dir_path).__next__()
 
         # Process each files within subdirectory
@@ -182,10 +199,21 @@ if is_directory:
                         + "."
                         + split_path[1]
                     )
+                    w_path2 = (
+                        bin_path
+                        + "/"
+                        + split_path[0]
+                        + "_"
+                        + mask[i]
+                        + "."
+                        + split_path[1]
+                    )
                     w_path_original = write_path + "/" + f
                     img = masked_image[i]
+                    img2 = mask_binary[i]
                     # Write the masked image
                     cv2.imwrite(w_path, img)
+                    cv2.imwrite(w_path2, img2)
                     if args.write_original_image:
                         # Write the original image
                         cv2.imwrite(w_path_original, original_image)
