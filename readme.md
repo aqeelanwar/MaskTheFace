@@ -1,5 +1,4 @@
-# MaskTheFace - Convert face dataset to masked dataset
-![cover_photo](images/MaskTheFace.png)
+
 ## What is MaskTheFace?
 MaskTheFace is computer vision-based script to mask faces in images. It uses a dlib based face landmarks detector to identify the face tilt and six key features of the face necessary for applying mask. Based on the face tilt, corresponding mask template is selected from the library of mask. The template mask is then transformed based on the six key features to fit perfectly on the face. The complete block diagram can be seen below. MaskTheFace provides a number of masks to select from. It is difficult to collect mask dataset under various conditions. MaskTheFace can be used to convert any existing face dataset to masked-face dataset. MaskTheFace identifies all the faces within an image, and applies the user selected masks to them taking into account various limitations such as face angle, mask fit, lighting conditions etc. A single image, or entire directory of images can be used as input to code.
 ![block_diagram](images/block_diag.png)
@@ -30,6 +29,9 @@ python mask_the_face.py --path <path-to-file-or-dir> --mask_type <type-of-mask> 
 
 # Example
 python mask_the_face.py --path 'data/office.jpg' --mask_type 'N95' --verbose --write_original_image
+
+# !REAL directory Example!
+python mask_the_face.py --path ./img_align_celeba --color white --verbose
 ```
 ![cover_photo](images/run.png)
 ### Arguments
@@ -129,41 +131,6 @@ The downloaded dataset folder contains
 3. pairs.txt: A text file containing 848 positive and negative pairs to be used for testing
 
 ---
-
-# Example usage
-
-## 1. Face recognition with masks
-Face recognition trained to usual face images has proven to give good accuracy. In the recent ongoing outbreak of Covid19, people have been advised to use face masks. With the majority of people using face masks, the face recognition system fails to perform. Due to limited mask images, there is not enough masked data available to train a new system. MaskTheFace can be used to create masked data set from an unmasked dataset which is then used to either fine-tune an existing or train a new face recognition system.
-
-### Example
-The paper below uses MaskTheFace for the application of masked face recognition and reports an increase of ∼38% in the true positive rate for the Facenet system. They also test the accuracy of the re-trained system on the MFR2 dataset and report similar accuracy.
-[https://arxiv.org/pdf/2008.11104.pdf](https://arxiv.org/pdf/2008.11104.pdf)
-
-
-
-## 2. Monitoring if people are using masks
-MaskTheFace generated datasets can be used to monitor if people are using face masks.
-
-### Example
-The detector above was trained on 2000 images (1000 mask, 1000 without mask) from the VGGface2 dataset. The masked images contained 4 different types of masks. A VGG16 network was trained on these images which achieved a 98.9% accuracy on the test dataset.
-
-![cover_photo](images/mask_no_mask.png)
-
-## 3. Classify masks
-MaskTheFace generated dataset can be used to classify among masks using a deep network.
-
-## Citation
-If you find this repository useful, please use following citation
-```
-@misc{anwar2020masked,
-title={Masked Face Recognition for Secure Authentication},
-author={Aqeel Anwar and Arijit Raychowdhury},
-year={2020},
-eprint={2008.11104},
-archivePrefix={arXiv},
-primaryClass={cs.CV}
-} 
-```
 
 
 ## License
