@@ -169,7 +169,7 @@ if is_directory:
             write_path = dir_write_path
             if is_image(image_path):
                 # Proceed if file is image
-                split_path = f.rsplit(".")
+                split_path = [".".join(split_path[:-1]),split_path[-1]]
                 masked_image, mask, mask_binary, original_image = mask_image(
                     image_path, args
                 )
